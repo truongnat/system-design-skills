@@ -1,12 +1,13 @@
 ---
 name: system-design-overview
-version: 2.5.0
-last_updated: 2025-03
-notes: Comprehensive coverage of AI engineering, platform, compliance, data, edge, finops, testing
-expires: 2026-03
+version: 2.6.0
+last_updated: 2026-03
+notes: Comprehensive coverage of AI engineering, platform, compliance, data, edge, finops, testing + GraphQL + AI Agent Security
+expires: 2027-03
 freshness_notes: >
   Review lại khi: React major release, PostgreSQL major release,
-  Node.js LTS thay đổi, CVE mới trong JWT/OAuth, Next.js App Router thay đổi lớn.
+  Node.js LTS thay đổi, CVE mới trong JWT/OAuth, Next.js App Router thay đổi lớn,
+  AI agent security vulnerabilities mới, GraphQL spec updates.
 description: >
   Comprehensive reference for system design across UI design systems, frontend web,
   mobile apps, backend HLD, low-level design, and cross-cutting concerns. Use this skill

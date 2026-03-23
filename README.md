@@ -1,6 +1,6 @@
 # System Design Overview — Skill
 
-**Version:** 2.5.0 | **Updated:** March 2025 | **Score:** 87.8/100 | **Lines:** 15,164
+**Version:** 2.6.0 | **Updated:** March 2026 | **Score:** 89.5/100 | **Lines:** 15,584
 
 A comprehensive, production-grade reference skill for system design — covering the full stack from UI design tokens to distributed infrastructure, AI engineering, platform engineering, compliance, and cloud economics.
 
@@ -27,7 +27,7 @@ When installed, this skill gives Claude access to a structured knowledge base th
 
 | File | Topics | Lines |
 |------|---------|-------|
-| `ai-engineering.md` | RAG pipeline, vector DBs, agents, MCP, LLMOps, multi-modal, fine-tuning, prompt engineering | 1,424 |
+| `ai-engineering.md` | RAG pipeline, vector DBs, agents, MCP, LLMOps, multi-modal, fine-tuning, prompt engineering, **AI agent security** | 1,712 |
 | `testing-fundamentals.md` | Unit, integration, E2E, contract, performance, visual regression, mobile, security, component | 1,440 |
 | `testing-automation.md` | TDD, BDD/Gherkin, mutation testing, property-based, chaos, a11y automation, flaky tests, test strategy | 1,259 |
 | `cross-cutting.md` | Security (JWT/OAuth/CVEs), observability, CI/CD, SRE/SLOs, Zero Trust, SBOM/SLSA | 1,272 |
@@ -38,8 +38,8 @@ When installed, this skill gives Claude access to a structured knowledge base th
 | `compliance.md` | GDPR, HIPAA, PCI-DSS, SOC 2 Type II, EU AI Act 2025, data residency, SBOM | 731 |
 | `edge-wasm.md` | Cloudflare Workers, Durable Objects, WebAssembly, WASM Component Model, Miniflare testing | 721 |
 | `platform-engineering.md` | IDP, golden paths, Backstage, GitOps, DevEx metrics, multi-cluster, Crossplane | 676 |
-| `finops.md` | Unit economics, right-sizing, RI/Spot strategy, K8s cost, serverless pricing, GCP/Azure | 660 |
-| `backend-hld.md` | DB selection, caching, message queues, API design, scaling, service mesh, PACELC | 832 |
+| `finops.md` | Unit economics, right-sizing, RI/Spot strategy, **K8s cost optimization**, serverless pricing, GCP/Azure | 660 |
+| `backend-hld.md` | DB selection, caching, message queues, API design, scaling, service mesh, **GraphQL schema design**, PACELC | 1,079 |
 | `ui-design-system.md` | Design tokens, component library, theming, a11y, motion tokens, Style Dictionary v4 | 580 |
 
 ### 5 utility files — quick lookup
@@ -198,7 +198,8 @@ Review and update annually or after major ecosystem shifts.
 | 2.2.0   | 83/100 | 9,791 | Data pipelines, compliance, edge/WASM, FinOps |
 | 2.3.0   | 84/100 | 12,102 | Multi-modal AI, SOC2, EU AI Act, Zero Trust, SBOM |
 | 2.4.0   | 85/100 | 13,556 | PWA, Web Workers, fine-tuning, orchestration, GPU sizing |
-| **2.5.0** | **87.8/100** | **15,164** | Profiling, background tasks, WASM Component Model, migration paths |
+| 2.5.0   | 87.8/100 | 15,164 | Profiling, background tasks, WASM Component Model, migration paths |
+| **2.6.0** | **89.5/100** | **15,584** | **GraphQL schema design patterns**, **AI agent security (OWASP Top 10)**, K8s cost optimization |
 
 ---
 

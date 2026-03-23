@@ -801,17 +801,263 @@ Alternatives nếu không muốn full service mesh:
 ```
 
 
-## Checklist HLD
+## 9. GraphQL Schema Design Patterns
 
-> 🔴 MUST = block ship | 🟠 SHOULD = fix trước prod | 🟡 NICE = tech debt
+### When to use GraphQL vs REST
 
-🔴 MUST:
-- [ ] Parameterized queries — không string concat trong SQL
-- [ ] Connection pooling (PgBouncer) cho PostgreSQL
-- [ ] Stateless app servers — không lưu session hoặc files local
-- [ ] DLQ cho tất cả queues, alert khi DLQ > 0
-- [ ] Idempotency cho queue consumers (dedup với Redis/DB)
-- [ ] Presigned URL cho file upload (không buffer qua API server)
+```
+GraphQL phù hợp:
+  - Multiple client platforms (web, mobile, tablet) với different data requirements
+  - Complex nested data relationships (user → orders → orderItems → product)
+  - Client needs to combine multiple resources in single request
+  - Rapid frontend iteration, frequent new data requirements
+  - Public API với diverse consumers (partners, integrations)
+
+REST phù hợp:
+  - Simple CRUD applications
+  - File upload/download (GraphQL không handle binary tốt)
+  - Caching ở HTTP layer quan trọng (CDN, browser cache)
+  - Team chưa quen với GraphQL complexity
+  - Microservices với clear bounded contexts (GraphQL có thể trở thành gateway bottleneck)
+
+Hybrid approach (recommended 2025):
+  - GraphQL cho client-facing API (BFF pattern)
+  - REST/gRPC cho service-to-service communication
+  - GraphQL mutations delegate sang async queue cho long-running operations
+```
+
+### Schema design — best practices
+
+```graphql
+# ❌ BAD: Overly nested mutations
+mutation UpdateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    user {
+      profile {
+        address {
+          city {
+            name
+          }
+        }
+      }
+    }
+  }
+}
+
+# ✅ GOOD: Flat mutations, return meaningful payload
+mutation UpdateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    user
+    errors { field, message }
+  }
+}
+
+# Union type cho polymorphic responses
+union SearchResult = User | Post | Comment
+
+search(query: String!): [SearchResult!]!
+
+# Interface cho shared behavior
+interface Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type User implements Node {
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: String!
+}
+
+# Cursor-based pagination (relay spec)
+type Query {
+  users(first: Int, after: String): UserConnection!
+}
+
+type UserConnection {
+  edges: [UserEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int  # expensive, optional
+}
+
+type UserEdge {
+  cursor: String!
+  node: User!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+```
+
+### N+1 query problem trong GraphQL
+
+```
+Vấn đề: Resolver chạy N queries cho N items
+  Query: { users { name, posts { title } } }
+  Execution:
+    1 query: SELECT * FROM users
+    N queries: SELECT * FROM posts WHERE user_id = ? (cho mỗi user)
+
+Solution: DataLoader pattern (batch + cache)
+
+class UserPostsLoader {
+  async batchLoad(userIds: string[]) {
+    // Single query thay vì N queries
+    const posts = await db.query(
+      'SELECT * FROM posts WHERE user_id = ANY($1)',
+      [userIds]
+    );
+    // Group by user_id
+    return userIds.map(id => 
+      posts.filter(p => p.user_id === id)
+    );
+  }
+}
+
+// Trong resolver
+const posts = await context.loaders.userPosts.load(user.id);
+// DataLoader tự động batch tất cả calls trong cùng tick
+```
+
+### GraphQL security pitfalls
+
+```graphql
+# ❌ CRITICAL: Deep queries → DoS
+query {
+  user {
+    friends {
+      friends {
+        friends { ... 50 levels deep ... }
+      }
+    }
+  }
+}
+# Solution: Query depth limiting (max depth: 5-10)
+
+# ❌ CRITICAL: Wide queries → DoS
+query {
+  user {
+    field1 field2 field3 ... field100
+  }
+}
+# Solution: Query complexity analysis
+# Assign cost: field1=1, expensiveField=10, reject if total > 1000
+
+# ❌ CRITICAL: Introspection trong production
+# query { __schema { types { name } } }
+# Solution: Disable introspection trong production
+# Apollo: introspection: false
+
+# ❌ Rate limiting khó vì tất cả POST /graphql
+# Solution: Persisted queries (client gửi query hash, server map to query)
+# Hoặc: GraphQL-aware rate limiting (tính complexity per query)
+
+# ✅ Query timeout
+# Apollo: plugins với timeout 5-10s
+
+# ✅ Field-level authorization
+# @hasRole(role: ADMIN) directive
+type User {
+  id: ID!
+  email: String! @hasRole(role: ADMIN)  # chỉ admin đọc được
+}
+```
+
+### GraphQL performance patterns
+
+```graphql
+# Query batching (Apollo Client tự động)
+# Multiple queries trong 1 HTTP request
+query {
+  user(id: 1) { name }
+  user(id: 2) { name }
+  user(id: 3) { name }
+}
+
+# Query deduplication
+# Client request cùng query 2 lần trong short window → merge thành 1
+
+# Persisted Queries (recommended cho production)
+# Client: gửi query hash
+# Server: lookup hash → full query
+# Benefits:
+#   - Giảm bandwidth (hash nhỏ hơn query string)
+#   - Prevent injection attacks (chỉ execute queries đã register)
+#   - CDN cacheable (hash = cache key)
+
+# Automatic Persisted Queries (APQ):
+#   1. Client gửi hash + full query (first time)
+#   2. Server cache hash → query mapping
+#   3. Client chỉ gửi hash (subsequent times)
+#   4. Server lookup và execute
+
+# Subscriptions cho realtime
+type Subscription {
+  orderStatusChanged(orderId: ID!): OrderUpdate!
+}
+
+# Implementation: WebSocket (graphql-ws protocol)
+# Scaling: Pub/Sub backend (Redis) để sync across instances
+```
+
+### Schema evolution — backward compatibility
+
+```graphql
+# ✅ Thêm field mới (backward compatible)
+type User {
+  id: ID!
+  email: String!
+  phoneNumber: String  # mới, optional
+}
+
+# ✅ Thêm optional argument (backward compatible)
+type Query {
+  users(limit: Int = 10, offset: Int = 0): [User!]!
+  users(first: Int, after: String): UserConnection!  # new cursor-based
+}
+
+# ❌ Remove field (breaking change)
+# Solution: Deprecate trước, remove sau
+type User {
+  email: String! @deprecated(reason: "Use primaryEmail instead")
+  primaryEmail: String!
+}
+
+# ❌ Đổi field type (breaking change)
+# User.age: Int → User.age: String
+# Solution: Tạo field mới, deprecate field cũ
+
+# ❌ Thêm required argument (breaking change)
+# Solution: Thêm optional argument với default value
+```
+
+---
+
+## 10. Service Mesh & Sidecar Pattern
+
+### Tại sao cần Service Mesh
+
+```
+Microservices problem: Mỗi service phải tự handle:
+  - mTLS, certificate rotation
+  - Retry logic, circuit breaking
+  - Observability (traces, metrics)
+  - Traffic management (canary, A/B)
+  - Load balancing
+
+→ Same code duplicated across 20 services, 5 languages
+→ Hard to change consistently
+
+Service Mesh: Tách những concerns này ra infrastructure layer
+  Service → Sidecar proxy (Envoy) → handles all networking
+  Application code chỉ lo business logic
+```
 
 🟠 SHOULD:
 - [ ] Estimate QPS, storage, bandwidth trước khi thiết kế
