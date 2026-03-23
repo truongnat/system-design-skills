@@ -6,6 +6,30 @@ A comprehensive, production-grade reference skill for system design — covering
 
 ---
 
+## 🚀 Installation
+
+### 1. The One-Liner (Remote Install)
+Run this command in your terminal to install or update the skill instantly across all agents (Gemini CLI, Cursor, etc.):
+```bash
+curl -sSL https://raw.githubusercontent.com/truongdq/system-design-skills/main/install.sh | bash
+```
+
+### 2. For Gemini CLI (Advanced)
+If you already have `gemini-cli` installed:
+```bash
+gemini skills install https://github.com/truongdq/system-design-skills.git
+```
+Or link it locally (if you cloned the repo):
+```bash
+./install.sh
+```
+
+### 3. For any other AI Agent (Cursor, Claude, Windsurf)
+- **Automatic:** The one-liner above clones files to `~/.gemini/skills/system-design-overview`.
+- **Manual:** Point your agent's context or **MCP (Model Context Protocol)** server to that directory.
+
+---
+
 ## What this skill does
 
 When installed, this skill gives Claude access to a structured knowledge base that Claude reads selectively based on your question. Rather than answering from training data alone, Claude consults the relevant reference file and provides deeper, more accurate, more current answers — including edge cases, trade-offs, anti-patterns, and decision frameworks.
