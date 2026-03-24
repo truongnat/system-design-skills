@@ -74,23 +74,56 @@ write_agents_md() {   # $1 = file path
 }
 
 write_cursor_mdc() {
-  mkdir -p ".cursor/rules"
-  DEST=".cursor/rules/system-design.mdc"
+  RULES_DIR=".cursor/rules"
+  SKILLS_DIR=".cursor/skills/system-design"
+  DEST="$RULES_DIR/system-design.mdc"
 
-  echo; info "Choose load mode for Cursor:"
-  echo "  1) alwaysApply: true   — load vào mọi chat (recommended)"
-  echo "  2) globs: **/*         — load khi có file nào đang mở"
-  echo "  3) description only    — AI tự quyết (không đảm bảo)"
-  read -rp "  → " cm
-  case $cm in
-    2) FRONTMATTER="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.\nglobs: \"**/*\"\nalwaysApply: false\n---" ;;
-    3) FRONTMATTER="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.\nalwaysApply: false\n---" ;;
-    *) FRONTMATTER="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.\nalwaysApply: true\n---" ;;
-  esac
+  mkdir -p "$RULES_DIR"
+  mkdir -p "$SKILLS_DIR"
 
-  printf "%b\n\n## System Design Skills\n\nLocal skill dir: \`%s\`\n\nWhen answering architecture or design questions:\n1. Read \`%s/SKILL.md\` for the routing table\n2. Load the relevant file from \`%s/references/\`\n" \
-    "$FRONTMATTER" "$SKILL_DIR" "$SKILL_DIR" "$SKILL_DIR" > "$DEST"
-  info "Written → $DEST"
+  info "Installing Rule & Skill separation for Cursor..."
+
+  # Copy skills from $SKILL_DIR to project's .cursor/skills/
+  if [ -d "$SKILL_DIR" ]; then
+    cp "$SKILL_DIR/SKILL.md" "$SKILLS_DIR/"
+    cp "$SKILL_DIR/references/"*.md "$SKILLS_DIR/"
+    info "Copied knowledge base to $SKILLS_DIR"
+  else
+    warn "Skill source not found at $SKILL_DIR, skipping file copy."
+  fi
+
+  # Create the Master Rule (.mdc)
+  cat <<EOF > "$DEST"
+---
+description: Senior System Architect Rule. Triggers on architecture, design, scaling, and system-level questions. Use /design command.
+globs: "**/*"
+alwaysApply: true
+---
+
+# 🏗️ System Design Architect Rule
+
+You are a Senior System Architect. You MUST follow this rule to integrate your local skills.
+
+## 📂 Skill Integration (Local-First)
+Your specialized knowledge is located in: \`.cursor/skills/system-design/\`.
+- **Primary Map:** Read \`.cursor/skills/system-design/SKILL.md\` first for routing.
+- **Decision Engine:** Consult \`.cursor/skills/system-design/decision-trees.md\` for quick paths.
+- **Domain Knowledge:** Read the relevant file in the same directory based on the user's query.
+
+## 🚦 Execution Protocol
+1.  **Identify Intent:** If the user asks about architecture, database selection, or scaling.
+2.  **Check 3 Questions:** ALWAYS ask about (Scale, Team, Constraints) if not provided.
+3.  **Read Skill:** Use the \`read_file\` tool to fetch the relevant skill from \`.cursor/skills/system-design/\`.
+4.  **Synthesize:** Provide the answer using the standards (Severity Tiers, Anti-patterns) found in the skills.
+
+## ⌨️ Trigger Commands
+- /design: Full system design process.
+- /arch: Code/Folder architecture review.
+
+---
+*Rule & Skill separated for context efficiency.*
+EOF
+  info "Written Master Rule → $DEST"
 }
 
 # ── installers ─────────────────────────────────────────────────────────────────

@@ -1,17 +1,18 @@
 #!/bin/bash
-# Cursor Local-First Installer (GSD-style)
-# This script installs the system design skills DIRECTLY into your project.
+# Cursor Professional Setup (Rule & Skill Separation)
+# Inspired by GSD-style modularity.
 
 REPO_RAW_URL="https://raw.githubusercontent.com/truongnat/system-design-skills/main"
 RULES_DIR=".cursor/rules"
-SKILLS_LOCAL_DIR="$RULES_DIR/system-design"
+SKILLS_DIR=".cursor/skills/system-design"
 
-echo "🚀 Installing System Design Skills LOCALLY into your project..."
+echo "🚀 Installing System Design Ecosystem..."
 
-# 1. Create directories
-mkdir -p "$SKILLS_LOCAL_DIR"
+# 1. Create directory structure
+mkdir -p "$RULES_DIR"
+mkdir -p "$SKILLS_DIR"
 
-# 2. List of files to download
+# 2. Download the Knowledge Base (Skills)
 FILES=(
   "SKILL.md"
   "references/ai-engineering.md"
@@ -34,48 +35,47 @@ FILES=(
   "references/ui-design-system.md"
 )
 
-# 3. Download each file
+echo "📡 Fetching Skills (Knowledge Base)..."
 for file in "${FILES[@]}"; do
   filename=$(basename "$file")
-  echo "📡 Downloading $filename..."
-  curl -sSL "$REPO_RAW_URL/$file" -o "$SKILLS_LOCAL_DIR/$filename"
+  curl -sSL "$REPO_RAW_URL/$file" -o "$SKILLS_DIR/$filename"
 done
 
-# 4. Create the Master Engine (.mdc)
-echo "🧠 Creating the Architect Engine..."
+# 3. Create the Master Rule (Instructions)
+echo "🧠 Creating the Master Rule (.mdc)..."
 cat <<EOF > "$RULES_DIR/system-design.mdc"
 ---
-description: Senior System Architect. Use for HLD, LLD, Scaling, DB selection, AI, and Compliance.
+description: Senior System Architect Rule. Triggers on architecture, design, scaling, and system-level questions. Use /design command.
 globs: "**/*"
 alwaysApply: true
 ---
 
-# 🏗️ System Design Architect (Local-First)
+# 🏗️ System Design Architect Rule
 
-You are a Senior System Architect. Your knowledge base is located locally in \`.cursor/rules/system-design/\`.
+You are a Senior System Architect. You MUST follow this rule to integrate your local skills.
 
-## 📋 PRE-FLIGHT CHECK
-Before answering any architecture query, you MUST:
-1. **Read \`.cursor/rules/system-design/SKILL.md\`** to understand the routing table.
-2. **Consult \`.cursor/rules/system-design/decision-trees.md\`** for quick decision paths.
+## 📂 Skill Integration (Local-First)
+Your specialized knowledge is located in: \`.cursor/skills/system-design/\`.
+- **Primary Map:** Read \`.cursor/skills/system-design/SKILL.md\` first for routing.
+- **Decision Engine:** Consult \`.cursor/skills/system-design/decision-trees.md\` for quick paths.
+- **Domain Knowledge:** Read the relevant file in the same directory based on the user's query.
 
-## 🔍 DEEP DIVE
-Based on the routing, read the specific file in \`.cursor/rules/system-design/\`:
-- For DB/Scaling: \`backend-hld.md\`
-- For AI/RAG: \`ai-engineering.md\`
-- For Security: \`cross-cutting.md\`
-- For Code Patterns: \`lld.md\`
+## 🚦 Execution Protocol
+1.  **Identify Intent:** If the user asks about architecture, database selection, or scaling.
+2.  **Check 3 Questions:** ALWAYS ask about (Scale, Team, Constraints) if not provided.
+3.  **Read Skill:** Use the \`read_file\` tool to fetch the relevant skill from \`.cursor/skills/system-design/\`.
+4.  **Synthesize:** Provide the answer using the standards (Severity Tiers, Anti-patterns) found in the skills.
 
-## 📜 MANDATES
-- Ask the **3 First Questions** (Scale, Team, Constraints) before proposing solutions.
-- Use **XML tags** (<thought>, <plan>) for complex reasoning.
-- Reference the specific local file you used in your answer.
+## ⌨️ Trigger Commands
+- /design: Full system design process.
+- /arch: Code/Folder architecture review.
 
 ---
-*Installed locally in .cursor/rules/system-design/*
+*Rule & Skill separated for context efficiency.*
 EOF
 
 echo ""
-echo "✅ SUCCESS! System Design Skills are now installed in your project."
-echo "📂 Check your sidebar: .cursor/rules/system-design/ is now populated."
-echo "💡 You can now commit these files to your repository."
+echo "✅ SUCCESS!"
+echo "📍 Rules: $RULES_DIR/system-design.mdc"
+echo "📂 Skills: $SKILLS_DIR/ (15+ reference files)"
+echo "💡 You now have a clean separation of 'How to think' (Rules) and 'What to know' (Skills)."
