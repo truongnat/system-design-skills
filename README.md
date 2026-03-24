@@ -8,16 +8,19 @@ A comprehensive, production-grade reference skill for system design — covering
 
 ## 🚀 Installation
 
-### ⚡ Cursor Users (Online Setup - Recommended)
+### ⚡ Cursor Users (GSD-Style Setup - Recommended)
 
-Đây là cách nhanh nhất để dùng bộ skill này mà **không cần cài đặt hay clone repo** về máy:
+Đây là cách setup mạnh mẽ nhất, lấy cảm hứng từ dự án **Get Shit Done**, giúp Cursor có khả năng thiết kế hệ thống cực kỳ chính xác:
 
-Trong thư mục dự án của bạn, chỉ cần chạy lệnh sau để tạo file Cursor Rule (.mdc):
+Trong thư mục dự án của bạn, chạy lệnh duy nhất này:
 ```bash
 curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/cursor-setup.sh | bash
 ```
 
-Sau khi chạy, Cursor sẽ tự động fetch kiến thức trực tiếp từ GitHub khi bạn đặt câu hỏi.
+**Tại sao cách này tốt hơn?**
+- **Bootstrap locally:** Tự động tải "Bản đồ kiến thức" (`SKILL.md`) và "Cây quyết định" (`decision-trees.md`) về máy để AI truy cập tức thì (không có độ trễ mạng).
+- **Online Deep Dive:** Các tài liệu chuyên sâu sẽ được AI tự động fetch từ GitHub khi cần thiết, đảm bảo bạn luôn có thông tin mới nhất mà không làm nặng project.
+- **Protocol-driven:** Ép AI phải tuân thủ quy trình "3 câu hỏi đầu tiên" trước khi đưa ra giải pháp.
 
 ---
 

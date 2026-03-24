@@ -1,43 +1,81 @@
 #!/bin/bash
-# Cursor Online-Only Installer for System Design Skills
+# Cursor Local-First Installer (GSD-style)
+# This script installs the system design skills DIRECTLY into your project.
 
 REPO_RAW_URL="https://raw.githubusercontent.com/truongnat/system-design-skills/main"
 RULES_DIR=".cursor/rules"
-DEST="$RULES_DIR/system-design.mdc"
+SKILLS_LOCAL_DIR="$RULES_DIR/system-design"
 
-# Create target dir
-mkdir -p "$RULES_DIR"
+echo "🚀 Installing System Design Skills LOCALLY into your project..."
 
-# Write Online-Mode MDC file
-cat <<EOF > "$DEST"
+# 1. Create directories
+mkdir -p "$SKILLS_LOCAL_DIR"
+
+# 2. List of files to download
+FILES=(
+  "SKILL.md"
+  "references/ai-engineering.md"
+  "references/anti-patterns.md"
+  "references/backend-hld.md"
+  "references/compliance.md"
+  "references/cross-cutting.md"
+  "references/data-pipelines.md"
+  "references/decision-trees.md"
+  "references/deprecated.md"
+  "references/edge-wasm.md"
+  "references/finops.md"
+  "references/frontend.md"
+  "references/lld.md"
+  "references/mobile.md"
+  "references/platform-engineering.md"
+  "references/sizing-guide.md"
+  "references/testing-automation.md"
+  "references/testing-fundamentals.md"
+  "references/ui-design-system.md"
+)
+
+# 3. Download each file
+for file in "${FILES[@]}"; do
+  filename=$(basename "$file")
+  echo "📡 Downloading $filename..."
+  curl -sSL "$REPO_RAW_URL/$file" -o "$SKILLS_LOCAL_DIR/$filename"
+done
+
+# 4. Create the Master Engine (.mdc)
+echo "🧠 Creating the Architect Engine..."
+cat <<EOF > "$RULES_DIR/system-design.mdc"
 ---
-description: Senior System Architect (Online Mode). Apply for High-Level Design (HLD), Scaling, DB selection, AI Engineering, and Compliance. Use trigger keywords like /design, /arch, /system, /scale.
+description: Senior System Architect. Use for HLD, LLD, Scaling, DB selection, AI, and Compliance.
 globs: "**/*"
 alwaysApply: true
 ---
 
-# System Design Skills - Cursor Online Mode
+# 🏗️ System Design Architect (Local-First)
 
-You are now a **Senior System Architect**. Your knowledge is hosted online at: $REPO_RAW_URL
+You are a Senior System Architect. Your knowledge base is located locally in \`.cursor/rules/system-design/\`.
 
-## 📡 Remote Knowledge Access (MANDATORY)
-Whenever the user asks about architecture, design, or technical choices:
-1. **Fetch Routing Table:** Read the routing table from: $REPO_RAW_URL/SKILL.md
-2. **Follow Deep Dive:** Based on the routing table, fetch the specific domain file.
-   - Example (Backend HLD): $REPO_RAW_URL/references/backend-hld.md
-   - Example (AI Engineering): $REPO_RAW_URL/references/ai-engineering.md
-   - Example (Decision Trees): $REPO_RAW_URL/references/decision-trees.md
+## 📋 PRE-FLIGHT CHECK
+Before answering any architecture query, you MUST:
+1. **Read \`.cursor/rules/system-design/SKILL.md\`** to understand the routing table.
+2. **Consult \`.cursor/rules/system-design/decision-trees.md\`** for quick decision paths.
 
-## 📐 Standards
-- **Fetch First:** You MUST fetch/read the remote reference file before providing a recommendation.
-- **Severity Tiers:** Use 🔴 MUST, 🟠 SHOULD, and 🟡 NICE.
-- **Decision Trees:** Use data-driven paths (e.g., "< 10K docs -> X").
+## 🔍 DEEP DIVE
+Based on the routing, read the specific file in \`.cursor/rules/system-design/\`:
+- For DB/Scaling: \`backend-hld.md\`
+- For AI/RAG: \`ai-engineering.md\`
+- For Security: \`cross-cutting.md\`
+- For Code Patterns: \`lld.md\`
+
+## 📜 MANDATES
+- Ask the **3 First Questions** (Scale, Team, Constraints) before proposing solutions.
+- Use **XML tags** (<thought>, <plan>) for complex reasoning.
+- Reference the specific local file you used in your answer.
 
 ---
-*Remote Base: $REPO_RAW_URL/SKILL.md*
+*Installed locally in .cursor/rules/system-design/*
 EOF
 
-echo "✅ Installed ONLINE System Design Skill for Cursor!"
-echo "📍 Location: $DEST"
-echo "🌐 This rule now points directly to GitHub (No local clone needed)."
-echo "💡 Use /design or /arch in Cursor Chat to trigger."
+echo ""
+echo "✅ SUCCESS! System Design Skills are now installed in your project."
+echo "📂 Check your sidebar: .cursor/rules/system-design/ is now populated."
+echo "💡 You can now commit these files to your repository."
