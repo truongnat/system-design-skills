@@ -25,6 +25,7 @@ FILES=(
   "references/decision-trees.md"
   "references/deprecated.md"
   "references/documentation-diagrams.md"
+  "references/edge-case-analysis.md"
   "references/edge-wasm.md"
   "references/finops.md"
   "references/frontend.md"

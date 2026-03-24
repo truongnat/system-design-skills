@@ -52,6 +52,7 @@ description: >
 
 | Domain | File | Trigger |
 |--------|------|---------|
+| Edge Cases | `references/edge-case-analysis.md` | "trường hợp biên", "edge case", "lỗi hệ thống", "race condition", "failure mode" |
 | Diagrams | `references/documentation-diagrams.md` | "vẽ sơ đồ X", "Mermaid", "C4 model", "Sequence diagram" |
 | Migration | `references/migration-strategy.md` | "nâng cấp hệ thống", "chuyển sang microservices", "migrate database" |
 | ADR (Records) | `references/adr-guide.md` | "ghi lại quyết định", "ADR", "tại sao chọn X?", "lưu trữ kiến trúc" |
