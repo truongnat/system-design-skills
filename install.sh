@@ -1,6 +1,10 @@
 #!/bin/bash
 # System Design Skills — Interactive Installer
 set -e
+FORCE=false
+# Accept: bash <(curl ...) --force  OR  bash <(curl ...) -f  OR  FORCE=1 bash <(curl ...)
+for arg in "$@"; do [[ $arg == "--force" || $arg == "-f" ]] && FORCE=true; done
+[[ "${FORCE_INSTALL:-}" == "1" ]] && FORCE=true
 
 # When piped via `curl | bash`, stdin is the pipe — redirect input from terminal
 exec < /dev/tty
@@ -22,20 +26,22 @@ need_curl() { command -v curl &>/dev/null || { warn "curl not found. Please inst
 # ── step 1: always clone/update the full repo ──────────────────────────────────
 sync_repo() {
   need_git
-  if [ -d "$SKILL_DIR/.git" ]; then
-    info "Updating existing skill repo…"
-    # fetch + reset instead of pull to avoid unrelated-histories / depth issues
-    if git -C "$SKILL_DIR" fetch --depth 1 origin main -q 2>/dev/null && \
-       git -C "$SKILL_DIR" reset --hard origin/main -q 2>/dev/null; then
-      : # success
-    else
-      # Corrupted or unrelated repo — nuke and re-clone
-      warn "Could not update. Re-cloning from scratch…"
+
+  if [ -d "$SKILL_DIR" ]; then
+    if $FORCE; then
+      warn "Force mode: wiping $SKILL_DIR and re-cloning…"
       rm -rf "$SKILL_DIR"
       git clone --depth 1 -q "$REPO" "$SKILL_DIR"
+    else
+      info "Refreshing skill repo…"
+      rm -rf "$SKILL_DIR/.git"
+      git -C "$SKILL_DIR" init -q
+      git -C "$SKILL_DIR" remote add origin "$REPO"
+      git -C "$SKILL_DIR" fetch --depth 1 origin main -q
+      git -C "$SKILL_DIR" reset --hard origin/main -q
     fi
   else
-    info "Cloning full skill repo to $SKILL_DIR …"
+    info "Cloning skill repo to $SKILL_DIR …"
     git clone --depth 1 -q "$REPO" "$SKILL_DIR"
   fi
   ok "Skill files ready at $SKILL_DIR"
@@ -213,4 +219,5 @@ echo
 echo -e "${GREEN}✨ Done!${RESET}"
 info "Skill files: $SKILL_DIR"
 info "Run again anytime to update or add more agents."
+info "Use --force / -f to wipe and re-clone from scratch."
 echo
