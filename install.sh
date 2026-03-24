@@ -2,6 +2,9 @@
 # System Design Skills — Interactive Installer
 set -e
 
+# When piped via `curl | bash`, stdin is the pipe — redirect input from terminal
+exec < /dev/tty
+
 REPO="https://github.com/truongnat/system-design-skills.git"
 RAW="https://raw.githubusercontent.com/truongnat/system-design-skills/main/SKILL.md"
 SKILL="system-design-overview"
@@ -12,26 +15,30 @@ ok()   { echo -e "${GREEN}✅ $1${RESET}"; }
 info() { echo -e "${CYAN}   $1${RESET}"; }
 warn() { echo -e "${YELLOW}⚠️  $1${RESET}"; }
 
-need_git() { command -v git &>/dev/null || { warn "git not found. Please install git first."; exit 1; }; }
-need_curl(){ command -v curl &>/dev/null || { warn "curl not found. Please install curl first."; exit 1; }; }
-clone_or_pull() {          # $1 = destination
+need_git()  { command -v git  &>/dev/null || { warn "git not found. Please install git first.";  exit 1; }; }
+need_curl() { command -v curl &>/dev/null || { warn "curl not found. Please install curl first."; exit 1; }; }
+
+clone_or_pull() {   # $1 = destination
+  need_git
   if [ -d "$1/.git" ]; then
     info "Updating existing install…"; git -C "$1" pull --depth 1 -q
   else
-    need_git; git clone --depth 1 -q "$REPO" "$1"
+    git clone --depth 1 -q "$REPO" "$1"
   fi
 }
-append_skill() {           # $1 = file path
+
+append_skill() {    # $1 = file path
   need_curl
   mkdir -p "$(dirname "$1")"
   curl -sSL "$RAW" >> "$1"
   info "Appended → $1"
 }
-write_skill() {            # $1 = file path, $2 = optional prepend text
+
+write_skill() {     # $1 = file path, $2 = optional prepend text
   need_curl
   mkdir -p "$(dirname "$1")"
   if [ -n "$2" ]; then
-    { echo -e "$2"; curl -sSL "$RAW"; } > "$1"
+    { printf '%b' "$2"; curl -sSL "$RAW"; } > "$1"
   else
     curl -sSL "$RAW" -o "$1"
   fi
@@ -99,7 +106,7 @@ install_gemini() {
 
 install_agents_md() {
   append_skill "AGENTS.md"
-  ok "AGENTS.md updated (works with Codex CLI, Devin, Amp, and any AGENTS.md-compatible agent)."
+  ok "AGENTS.md updated (Codex CLI, Devin, Amp, and any AGENTS.md-compatible agent)."
 }
 
 install_all() {
@@ -111,7 +118,6 @@ install_all() {
   append_skill ".github/copilot-instructions.md"
   append_skill "AGENTS.md"
   append_skill "GEMINI.md"
-  # CLAUDE.md → reference AGENTS.md
   echo -e "\n@AGENTS.md" >> CLAUDE.md
   ok "All agents configured."
 }
