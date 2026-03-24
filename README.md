@@ -8,46 +8,30 @@ A comprehensive, production-grade reference skill for system design — covering
 
 ## 🚀 Installation
 
-### ⚡ One-Liner
+### ⚡ Cursor Users (Online Setup - Recommended)
 
-Run this in your terminal — an interactive menu will guide you:
+Đây là cách nhanh nhất để dùng bộ skill này mà **không cần cài đặt hay clone repo** về máy:
 
+Trong thư mục dự án của bạn, chỉ cần chạy lệnh sau để tạo file Cursor Rule (.mdc):
 ```bash
-bash <(curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/install.sh)
+curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/cursor-setup.sh | bash
 ```
 
-> **Note:** Use `bash <(...)` instead of `curl | bash` — this lets the interactive menu read your keyboard input correctly.
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-╔══════════════════════════════════════════╗
-║   System Design Skills — Installer       ║
-╚══════════════════════════════════════════╝
-
-  Which agent(s) do you want to install for?
-
-  1) Claude Code
-  2) Cursor
-  3) Windsurf
-  4) GitHub Copilot / VS Code
-  5) Gemini CLI
-  6) AGENTS.md  (Codex CLI / Devin / Amp / universal)
-  7) All of the above
-  0) Cancel
-
-  →
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-
-Pick a number — for options `1`, `2`, `3`, `4`, `5` you'll get a follow-up to choose global vs project-level (or native file vs `AGENTS.md`). Option `7` installs everything at once with sensible defaults.
+Sau khi chạy, Cursor sẽ tự động fetch kiến thức trực tiếp từ GitHub khi bạn đặt câu hỏi.
 
 ---
 
-### 📋 Config file reference
+### ⌨️ Cursor Commands
+
+Sau khi cài đặt, bạn có thể dùng các lệnh sau trong **Cursor Chat (Cmd+L)** hoặc **Composer (Cmd+I)**:
+
+- `/design` + [câu hỏi]: Kích hoạt quy trình thiết kế hệ thống (hỏi 3 câu hỏi đầu tiên, tra cứu HLD).
+- `/arch` + [file/folder]: Review cấu trúc thư mục dựa trên các pattern LLD (Clean Arch, Hexagonal).
+- `/scale` + [vấn đề]: Tư vấn lộ trình nâng cấp hệ thống dựa trên Latency & Throughput thực tế.
+
+---
+
+### 📋 Config file reference (Other Agents)
 
 | Agent | Config file(s) | Notes |
 |---|---|---|
