@@ -1,55 +1,55 @@
 # SRE & Incident Management
 
-Dùng file này để thiết kế hệ thống Giám sát (Observability) và Quy trình Ứng phó Sự cố (Incidents).
+Use this file to design Monitoring (Observability) systems and Incident Response processes.
 
-## 📊 Observability (3 trụ cột)
+## 📊 Observability (3 Pillars)
 
-### 1. Metrics (Con số)
-Giám sát tình trạng hệ thống qua các thông số.
+### 1. Metrics
+Monitor system health through quantitative data.
 - **Tools:** Prometheus + Grafana, Datadog.
-- **Chỉ số RED:** Requests (Rate), Errors, Duration (Latency).
+- **RED Metrics:** Requests (Rate), Errors, Duration (Latency).
 
-### 2. Logs (Nhật ký)
-Dùng để gỡ lỗi và phân tích nguyên nhân.
+### 2. Logs
+Used for debugging and root cause analysis.
 - **Tools:** ELK Stack (Elasticsearch, Logstash, Kibana), Loki.
-- **Structured Logging:** Ghi log dạng JSON để dễ dàng query.
+- **Structured Logging:** Record logs in JSON for easy querying.
 
-### 3. Tracing (Dấu vết)
-Theo dõi một request đi qua nhiều microservices.
+### 3. Tracing
+Track a single request across multiple microservices.
 - **Tools:** Jaeger, Tempo.
-- **Tiêu chuẩn:** OpenTelemetry (Vendor-neutral).
+- **Standard:** OpenTelemetry (Vendor-neutral).
 
 ---
 
-## 📈 SRE Principles (Hợp đồng độ tin cậy)
+## 📈 SRE Principles
 
 ### 1. SLI / SLO / SLA
-- **SLI (Indicator):** Chỉ số đo lường thực tế (Ví dụ: Tỷ lệ 200 OK).
-- **SLO (Objective):** Mục tiêu hướng tới (Ví dụ: 99.9% thành công).
-- **SLA (Agreement):** Cam kết kinh doanh với khách hàng (Ví dụ: 99.5% - bồi thường nếu vi phạm).
+- **SLI (Indicator):** Real-world metrics (e.g., HTTP 200 rate).
+- **SLO (Objective):** Target goal (e.g., 99.9% success rate).
+- **SLA (Agreement):** Business commitment to customers (e.g., 99.5% - compensation if violated).
 
-### 2. Error Budget (Ngân sách lỗi)
-Khoảng sai sót cho phép trong một tháng (Ví dụ: 1-99.9% = 0.1%).
-- **Nếu hết ngân sách:** Dừng deploy feature mới, tập trung vào fix bug/Reliability.
+### 2. Error Budget
+The allowed margin for failure within a month (e.g., 1 - 99.9% = 0.1%).
+- **If budget is exhausted:** Stop new feature deploys, focus on fixes/Reliability.
 
 ---
 
-## 🚒 Incident Response (Khi hệ thống sập)
+## 🚒 Incident Response
 
-### 1. Quy trình 4 bước
-1. **Detection (Phát hiện):** Hệ thống Alerting (Slack/PagerDuty) cảnh báo.
-2. **Triage (Phân loại):** Đánh giá mức độ ưu tiên (P0, P1, P2).
-3. **Mitigation (Giảm nhẹ):** Rollback code ngay lập tức (Ưu tiên số 1: Giảm thiểu thiệt hại).
-4. **Resolution (Giải quyết):** Sửa lỗi và đẩy code vá (Hotfix).
+### 1. 4-Step Process
+1. **Detection:** Alerting systems (Slack/PagerDuty) notify the team.
+2. **Triage:** Assess priority (P0, P1, P2).
+3. **Mitigation:** Roll back code immediately (Priority #1: Minimize damage).
+4. **Resolution:** Fix the bug and push the hotfix.
 
-### 2. Post-mortem (Rút kinh nghiệm)
-Viết báo cáo sau sự cố với tinh thần **"Blameless"** (Không đổ lỗi cá nhân).
-- **Nội dung:** Chuyện gì đã xảy ra? Tại sao? Làm sao để không lặp lại? Bài học rút ra?
+### 2. Post-mortem
+Conduct "Blameless" post-mortem reports.
+- **Content:** What happened? Why? How to prevent it? Lessons learned?
 
 ---
 
 ## 🔴 SRE Checklist
-- [ ] Đã cấu hình **Alerting** (Slack/Email/Call)?
-- [ ] Đã có **Dashboard** giám sát các chỉ số quan trọng (Golden Signals)?
-- [ ] Có quy trình **On-call** (Ai trực ca đêm/cuối tuần)?
-- [ ] Có bản ghi **Post-mortem** cho mọi sự cố P0/P1?
+- [ ] Are **Alerting** (Slack/Email/Phone) mechanisms configured?
+- [ ] Are **Dashboards** in place for critical metrics (Golden Signals)?
+- [ ] Is there an **On-call** process (Who is on duty at night/weekends)?
+- [ ] Is a **Post-mortem** record created for every P0/P1 incident?

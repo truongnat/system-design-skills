@@ -1,59 +1,59 @@
 # Edge Case & Failure Mode Analysis
 
-Dùng file này để ép AI tìm kiếm các kịch bản lỗi, tranh chấp dữ liệu và các trường hợp biên.
+Use this file to enforce AI search for failure modes, race conditions, and boundary cases.
 
-## 🛡️ Khung phân tích (Analysis Framework)
+## 🛡️ Analysis Framework
 
-Mọi giải pháp kiến trúc phải được "stress test" qua 5 câu hỏi:
-1. **Concurrency:** Điều gì xảy ra nếu 2 request cùng sửa 1 dữ liệu tại cùng 1 mili giây? (Race condition)
-2. **Partial Failure:** Nếu Service A gọi Service B thành công nhưng Service B chết ngay trước khi trả về kết quả? (Zombie state)
-3. **Network:** Điều gì xảy ra nếu mạng bị chậm (latency) hoặc đứt (partition)?
-4. **Idempotency:** Nếu một request được gửi đi 2 lần (do user click 2 lần hoặc retry)?
-5. **Data Integrity:** Nếu DB bị crash giữa chừng khi đang chạy transaction?
+Every architecture solution must be "stress tested" with 5 questions:
+1. **Concurrency:** What happens if two requests modify the same record at the same millisecond? (Race condition)
+2. **Partial Failure:** If Service A calls Service B successfully, but Service B dies just before returning the result? (Zombie state)
+3. **Network:** What happens if the network is slow (latency) or disconnected (partition)?
+4. **Idempotency:** What if a request is sent twice (due to a double-click or retry)?
+5. **Data Integrity:** What if the database crashes in the middle of a transaction?
 
 ---
 
 ## 💣 Common Edge Cases by Domain
 
 ### 1. Payments & Transactions
-- **Double Spend:** User nhấn "Thanh toán" 2 lần thật nhanh.
-- **Insufficient Funds during capture:** Số dư đủ khi `authorize` nhưng thiếu khi `capture`.
-- **Currency Fluctuation:** Tỷ giá thay đổi ngay giữa lúc checkout và payment.
+- **Double Spend:** User hits the "Pay" button twice very quickly.
+- **Insufficient Funds during capture:** Sufficient balance during `authorize`, but missing during `capture`.
+- **Currency Fluctuation:** Exchange rate changes between checkout and actual payment.
 
 ### 2. Messaging & Events (Kafka/RabbitMQ)
-- **Out of order:** Event B đến trước Event A dù A xảy ra trước.
-- **Duplicate Delivery:** Một message được consume 2 lần (At-least-once delivery).
-- **Poison Pill:** Một message bị lỗi làm crash toàn bộ consumer, gây ra lặp lại vô tận.
+- **Out of order:** Event B arrives before Event A even though A happened first.
+- **Duplicate Delivery:** A message is consumed twice (At-least-once delivery).
+- **Poison Pill:** A faulty message crashes the consumer, leading to an infinite retry loop.
 
 ### 3. Caching (Redis)
-- **Cache Stampede (Thundering Herd):** Cache hết hạn đồng thời, 1 triệu request cùng đổ vào DB.
-- **Cache Penetration:** Request liên tục vào các key không tồn tại, xuyên qua cache vào DB.
-- **Stale Data:** Update DB thành công nhưng xóa/update cache thất bại.
+- **Cache Stampede (Thundering Herd):** Cache expires simultaneously, sending 1 million requests to the DB.
+- **Cache Penetration:** Constant requests for non-existent keys, bypassing the cache to hit the DB.
+- **Stale Data:** DB update is successful, but the cache clear/update fails.
 
 ### 4. Distributed Systems
-- **Clock Skew:** Thời gian trên Server A khác Server B, làm sai lệch thứ tự log/event.
-- **Brain Split:** Cluster bị chia cắt, 2 node đều tự nhận là Master.
-- **Hot Keys:** Một bản ghi (ví dụ: KOL) nhận 90% lượng traffic, làm quá tải 1 phân vùng DB.
+- **Clock Skew:** Time on Server A differs from Server B, causing out-of-order logs/events.
+- **Split Brain:** The cluster is partitioned, and two nodes both claim to be the Master.
+- **Hot Keys:** A single record (e.g., a celebrity) receives 90% of the traffic, overloading a specific DB shard.
 
 ---
 
-## 🛠️ Kỹ thuật xử lý (Mitigation Patterns)
+## 🛠️ Mitigation Patterns
 
-Khi phát hiện Edge Case, AI phải đề xuất ngay các pattern:
-- **Idempotency Key:** Dùng Header `X-Idempotency-Key` cho mọi API ghi dữ liệu.
-- **Optimistic Locking:** Dùng `version` field để chống race condition trong DB.
-- **Circuit Breaker:** Ngắt kết nối khi service đích có dấu hiệu quá tải.
-- **Dead Letter Queue (DLQ):** Cách ly các message lỗi để xử lý sau.
-- **Exponential Backoff & Jitter:** Retry với thời gian chờ tăng dần và ngẫu nhiên.
+When an Edge Case is detected, the AI must propose these patterns:
+- **Idempotency Key:** Use the `X-Idempotency-Key` header for all write APIs.
+- **Optimistic Locking:** Use a `version` field to prevent race conditions in the DB.
+- **Circuit Breaker:** Disconnect when the target service shows signs of overload.
+- **Dead Letter Queue (DLQ):** Isolate faulty messages for later processing.
+- **Exponential Backoff & Jitter:** Retry with increasing and randomized wait times.
 
 ---
 
-## 📊 Ma trận rủi ro (FMEA Lite)
+## 📊 Risk Matrix (FMEA Lite)
 
-AI phải liệt kê Edge Cases dưới dạng bảng:
-| Edge Case | Khả năng xảy ra | Mức độ nghiêm trọng | Cách xử lý (Mitigation) |
+List Edge Cases in a table:
+| Edge Case | Probability | Severity | Mitigation |
 | :--- | :--- | :--- | :--- |
-| Race condition | Cao | 🔴 Nghiêm trọng | Optimistic Locking |
-| Network Timeout | Trung bình | 🟠 Trung bình | Idempotency + Retry |
-| DB Crash | Thấp | 🔴 Cực cao | WAL + Replication |
-| Hot Key | Trung bình | 🟠 Trung bình | Sharding + Local Cache |
+| Race condition | High | 🔴 Critical | Optimistic Locking |
+| Network Timeout | Medium | 🟠 Medium | Idempotency + Retry |
+| DB Crash | Low | 🔴 Critical | WAL + Replication |
+| Hot Key | Medium | 🟠 Medium | Sharding + Local Cache |

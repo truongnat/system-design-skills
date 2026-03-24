@@ -21,6 +21,10 @@ Whenever the user asks about architecture, design, or technical choices:
 - **Severity First:** Always tag your advice with 🔴 MUST (Critical), 🟠 SHOULD (Recommended), or 🟡 NICE (Optimization).
 - **Latency Budget:** Refer to the latency benchmarks in `SKILL.md` when discussing performance.
 
+## 🌐 Language & Reporting
+- **Interaction Language:** Communicate in the language preferred by the user (e.g., if the user asks in Vietnamese, respond in Vietnamese). Default to English for all technical reports unless specified otherwise.
+- **Source of Truth:** All reference materials are in English to maintain technical precision. Always translate concepts accurately when responding in other languages.
+
 ## ⌨️ Command Shortcuts
 - `/design`: Trigger full system design workflow. Ask the "3 First Questions" (Scale, Team, Constraints) first.
 - `/arch`: Review current folder structure against LLD patterns in `references/lld.md`.

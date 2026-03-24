@@ -1,10 +1,10 @@
 # Documentation & Visualization Standards (Mermaid.js)
 
-Dùng file này để hướng dẫn AI vẽ sơ đồ kiến trúc hệ thống bằng Mermaid.js.
+Use this file to guide the AI in drawing system architecture diagrams using Mermaid.js.
 
-## 📐 C4 Model (Cấp độ Architecture)
+## 📐 C4 Model (Architecture Level)
 
-### C1: System Context (Bức tranh tổng quan)
+### C1: System Context (Overview)
 ```mermaid
 graph TD
     User((User))
@@ -42,8 +42,8 @@ graph LR
     ServiceB --> Cache
 ```
 
-## 🔄 Sequence Diagram (Luồng dữ liệu)
-Dùng để mô tả flow Auth, Order, Payment...
+## 🔄 Sequence Diagram (Data Flow)
+Used to describe flows for Auth, Orders, Payments, etc.
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -57,7 +57,7 @@ sequenceDiagram
     A-->>U: 200 OK (Token)
 ```
 
-## 🕸️ State Machine (Trạng thái đơn hàng/workflow)
+## 🕸️ State Machine (Order Status/Workflow)
 ```mermaid
 stateDiagram-v2
     [*] --> Pending
@@ -68,8 +68,8 @@ stateDiagram-v2
     Shipped --> Returned: Customer Rejection
 ```
 
-## 🔴 CÁCH VẼ ĐÚNG (Guidelines)
-- **Top-Down:** Ưu tiên vẽ từ trên xuống dưới cho kiến trúc.
-- **Left-Right:** Ưu tiên vẽ từ trái sang phải cho data flow.
-- **Annotations:** Luôn thêm chú thích về công nghệ (ví dụ: `[PostgreSQL]`, `[gRPC]`) vào các node.
-- **Simplicity:** Không vẽ quá 15-20 nodes trong một sơ đồ. Nếu quá phức tạp, hãy tách nhỏ.
+## 🔴 Drawing Guidelines
+- **Top-Down:** Preferred for overall architecture.
+- **Left-Right:** Preferred for data flow.
+- **Annotations:** Always add technology notes (e.g., `[PostgreSQL]`, `[gRPC]`) to the nodes.
+- **Simplicity:** Do not exceed 15-20 nodes per diagram. If too complex, split them into smaller diagrams.

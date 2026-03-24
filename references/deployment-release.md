@@ -1,52 +1,52 @@
 # Deployment & Release Engineering
 
-Dùng file này để tư vấn về CI/CD, chiến lược Deploy và Release an toàn (Zero-downtime).
+Use this file to advise on CI/CD, deployment strategies, and safe release (Zero-downtime).
 
-## 🚀 Chiến lược Deployment (Cấp độ Infra)
+## 🚀 Deployment Strategies (Infra Level)
 
-### 1. Rolling Update (Mặc định K8s)
-Cập nhật từng instance một.
-- **Ưu:** Tiết kiệm tài nguyên.
-- **Nhược:** Hai phiên bản chạy song song lâu, khó rollback tức thì.
+### 1. Rolling Update (K8s Default)
+Update one instance at a time.
+- **Pros:** Resource-efficient.
+- **Cons:** Two versions run simultaneously for a while; immediate rollback can be slow.
 
 ### 2. Blue/Green Deployment
-Chạy song song 2 môi trường hoàn chỉnh.
-- **Ưu:** Rollback trong 1 giây (chuyển hướng Traffic). An toàn tuyệt đối.
-- **Nhược:** Tốn gấp đôi chi phí hạ tầng trong lúc deploy.
+Run two identical environments side-by-side.
+- **Pros:** 1-second rollback (traffic redirection). Extremely safe.
+- **Cons:** Double infrastructure cost during deployment.
 
-### 3. Canary Release (Tiêu chuẩn Big Tech)
-Đẩy version mới cho 1-5% user trước khi roll out toàn bộ.
-- **Ưu:** Phát hiện lỗi sớm với số ít user.
-- **Nhược:** Cần hệ thống Metrics cực mạnh để tự động rollback nếu lỗi.
+### 3. Canary Release (Big Tech Standard)
+Push the new version to 1-5% of users before a full rollout.
+- **Pros:** Early bug detection with a small audience.
+- **Cons:** Requires strong metrics and monitoring for automated rollback.
 
 ---
 
-## 🛠 Release Patterns (Tách biệt Deploy và Release)
+## 🛠 Release Patterns (Separating Deploy from Release)
 
-### 1. Feature Flags (Tắt/Mở tính năng)
-Code đã deploy nhưng user chưa thấy cho đến khi bật "Cờ".
-- **Tools:** LaunchDarkly, Flagsmith, Unleash, hoặc tự build với Redis.
-- **Lợi ích:** Có thể test trên Production với user nội bộ.
+### 1. Feature Flags
+Code is deployed but invisible to users until the "Flag" is toggled.
+- **Tools:** LaunchDarkly, Flagsmith, Unleash, or custom-built with Redis.
+- **Benefit:** Allows testing on production with internal users.
 
 ### 2. Dark Launching
-Gửi traffic thực vào backend mới nhưng không hiển thị kết quả cho user.
-- **Mục tiêu:** Stress test hệ thống mới với tải thực tế.
+Send real traffic to the new backend but don't show results to the user.
+- **Goal:** Stress test the new system with real-world load.
 
 ---
 
-## 🔄 Chiến lược Rollback & Database
-- **Backward Compatibility:** Code mới PHẢI đọc được dữ liệu cũ.
+## 🔄 Rollback & Database Strategy
+- **Backward Compatibility:** New code MUST be able to read old data.
 - **Expand/Contract Pattern (Database):**
-  - Bước 1: Add cột mới (Nullable).
-  - Bước 2: Deploy code mới (Ghi cả 2 cột).
-  - Bước 3: Migrate dữ liệu cũ sang cột mới.
-  - Bước 4: Deploy code mới (Chỉ dùng cột mới).
-  - Bước 5: Xóa cột cũ.
+  - Step 1: Add a new column (Nullable).
+  - Step 2: Deploy new code (Writes to both columns).
+  - Step 3: Migrate old data to the new column.
+  - Step 4: Deploy new code (Uses only the new column).
+  - Step 5: Remove the old column.
 
 ---
 
 ## 🔴 Deployment Checklist
-- [ ] Đã có **Health Check** (Liveness/Readiness probes)?
-- [ ] Đã cấu hình **Graceful Shutdown** (Đợi 30s trước khi kill process)?
-- [ ] Đã có **Automated Rollback** dựa trên tỷ lệ lỗi (Error Rate > 5%)?
-- [ ] Đã kiểm tra **Database Migrations** có gây khóa bảng (Table Lock) không?
+- [ ] Are **Health Checks** (Liveness/Readiness probes) configured?
+- [ ] Is **Graceful Shutdown** configured (Wait 30s before killing the process)?
+- [ ] Is **Automated Rollback** based on Error Rate (e.g., Error Rate > 5%) in place?
+- [ ] Have **Database Migrations** been checked for potential table locks?

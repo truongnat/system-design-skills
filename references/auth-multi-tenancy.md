@@ -1,53 +1,53 @@
 # SaaS Multi-tenancy & Advanced Auth
 
-Dùng file này để thiết kế hệ thống SaaS (Software-as-a-Service) đa khách hàng và Bảo mật.
+Use this file to design multi-customer SaaS (Software-as-a-Service) systems and security.
 
-## 🏗️ Kiến trúc Multi-tenancy (Cô lập dữ liệu)
+## 🏗️ Multi-tenancy Architecture (Data Isolation)
 
 ### 1. Database-per-tenant (Siloed)
-Mỗi khách hàng một DB riêng.
-- **Ưu:** Bảo mật tuyệt đối, dễ scale riêng từng tenant.
-- **Nhược:** Chi phí cao, khó vận hành (deploy migration cho 1000 DB).
+Each customer has their own database.
+- **Pros:** Maximum security, easy to scale individual tenants.
+- **Cons:** High cost, operational overhead (deploying migrations to 1000 DBs).
 
 ### 2. Schema-per-tenant (Bridge)
-Dùng chung 1 DB nhưng mỗi khách hàng 1 Schema riêng (Postgres/MySQL).
-- **Ưu:** Cân bằng giữa chi phí và bảo mật.
-- **Nhược:** Khó scale nếu một tenant cực lớn (DB bottleneck).
+Shared database, but each customer has their own Schema (Postgres/MySQL).
+- **Pros:** Balance between cost and security.
+- **Cons:** Hard to scale if a single tenant grows massive (DB bottleneck).
 
 ### 3. Pooled Database (Shared)
-Dùng chung DB và Schema, phân biệt bằng cột `tenant_id`.
-- **Ưu:** Rẻ nhất, vận hành dễ nhất.
-- **Nhược:** Rủi ro lộ dữ liệu giữa các tenant cao. **Bắt buộc dùng RLS (Row-level Security)**.
+Shared database and schema, distinguished by a `tenant_id` column.
+- **Pros:** Cheapest, easiest to operate.
+- **Cons:** High risk of data leakage between tenants. **Row-level Security (RLS) is mandatory**.
 
 ---
 
 ## 🔐 Advanced Authentication & Authorization
 
-### 1. Phân quyền (AuthZ)
-- **RBAC (Role-based):** Phân quyền theo vai trò (Admin, Manager, User).
-- **ABAC (Attribute-based):** Phân quyền theo thuộc tính (Ví dụ: "Manager" ở "Hà Nội" mới được xem file).
+### 1. Authorization (AuthZ)
+- **RBAC (Role-based):** Permissions by role (Admin, Manager, User).
+- **ABAC (Attribute-based):** Permissions by attribute (e.g., "Manager" in "Hanoi" can view files).
 
 ### 2. Modern Auth Patterns
-- **Passkeys (FIDO2/WebAuthn):** Đăng nhập không mật khẩu bằng vân tay/FaceID.
-- **OIDC (OpenID Connect):** Dùng để build hệ thống SSO (Single Sign-On).
-- **MFA (Multi-factor):** Bắt buộc cho Admin tenants (SMS/Email/Authenticator).
+- **Passkeys (FIDO2/WebAuthn):** Passwordless login using fingerprints/FaceID.
+- **OIDC (OpenID Connect):** For building SSO (Single Sign-On) systems.
+- **MFA (Multi-factor):** Mandatory for Admin tenants (SMS/Email/Authenticator).
 
 ---
 
 ## 💰 SaaS Operations (Tiers & Limits)
 
-### 1. Rate Limiting (Giới hạn theo gói cước)
-Dùng Redis (Fixed Window, Sliding Window, hoặc Token Bucket).
-- Ví dụ: Gói Free (10 req/min), Pro (100 req/min).
+### 1. Rate Limiting (By pricing plan)
+Use Redis (Fixed Window, Sliding Window, or Token Bucket).
+- Example: Free plan (10 req/min), Pro plan (100 req/min).
 
 ### 2. Quotas & Usage Tracking
-Theo dõi dung lượng lưu trữ, số lượng user, số lượng API calls để tính tiền (Usage-based billing).
-- **Tool:** Stripe Billing, Lago, hoặc OpenMeter.
+Track storage, user count, and API calls for billing (Usage-based billing).
+- **Tools:** Stripe Billing, Lago, or OpenMeter.
 
 ---
 
 ## 🔴 SaaS Checklist
-- [ ] Dữ liệu Tenant đã được cô lập (Isolating) triệt để chưa?
-- [ ] Có cơ chế **Tenant Provisioning** (Tạo tự động khi khách hàng đăng ký) không?
-- [ ] Có **Privacy Policy** và **Data Residency** (Lưu data tại khu vực của user)?
-- [ ] Đã mã hóa dữ liệu nhạy cảm (Encryption-at-rest)?
+- [ ] Is Tenant Data thoroughly isolated?
+- [ ] Is there a **Tenant Provisioning** mechanism (Automatic when customers sign up)?
+- [ ] Are **Privacy Policy** and **Data Residency** requirements (e.g., storing data in the user's region) met?
+- [ ] Is sensitive data encrypted at rest?

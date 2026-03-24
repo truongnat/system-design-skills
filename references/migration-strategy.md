@@ -1,43 +1,43 @@
 # Migration & Modernization Playbook
 
-Dùng file này để hướng dẫn AI cách nâng cấp hệ thống cũ (Monolith) sang hiện đại (Microservices/Serverless/Bun).
+Use this file to guide the AI on how to upgrade legacy systems (Monolith) to modern ones (Microservices/Serverless/Bun).
 
-## 🏗️ Chiến lược di chuyển (Core Patterns)
+## 🏗️ Core Migration Patterns
 
-### 1. Strangler Fig Pattern (Ưu tiên số 1)
-Thay thế hệ thống cũ dần dần bằng cách bọc các feature mới trong services mới.
-- **Cách làm:** Đặt một **Reverse Proxy/API Gateway** phía trước. Chuyển hướng từng endpoint từ cũ (Old) sang mới (New).
-- **Lợi ích:** Rủi ro thấp, rollback dễ dàng, có thể chạy song song.
+### 1. Strangler Fig Pattern (Priority #1)
+Replace legacy features gradually by wrapping them in new services.
+- **Method:** Place a Reverse Proxy/API Gateway in front. Route individual endpoints from Old to New.
+- **Benefits:** Low risk, easy rollback, can run in parallel.
 
 ### 2. Anti-corruption Layer (ACL)
-Xây dựng một layer trung gian để hệ thống mới không bị "ô nhiễm" bởi data model cũ.
-- **Cách làm:** Tạo một adapter service/library để map data giữa New API và Old Legacy System.
+Build an intermediary layer so the new system isn't "polluted" by legacy data models.
+- **Method:** Create an adapter service/library to map data between the New API and the Legacy System.
 
-### 3. Database Migration (Zero-downtime)
-Di chuyển data mà không dừng hệ thống (Online Migration).
-- **Bước 1:** Dual Write (Ghi đồng thời vào cả DB cũ và DB mới).
-- **Bước 2:** Background Sync (Đồng bộ data cũ sang mới via CDC/Debezium).
-- **Bước 3:** Verify Data (So sánh dữ liệu 2 bên).
-- **Bước 4:** Switch Reads (Bắt đầu đọc từ DB mới).
-- **Bước 5:** Switch Writes (Chỉ ghi vào DB mới, tắt dual write).
+### 3. Zero-downtime Database Migration
+Migrate data without stopping the system (Online Migration).
+- **Step 1:** Dual Write (Write to both old and new DBs simultaneously).
+- **Step 2:** Background Sync (Synchronize legacy data via CDC/Debezium).
+- **Step 3:** Verify Data (Compare data on both sides).
+- **Step 4:** Switch Reads (Start reading from the new DB).
+- **Step 5:** Switch Writes (Only write to the new DB, turn off dual write).
 
 ---
 
 ## 🚦 Migration Checklists
 
 ### 🔴 MUST-DO
-- [ ] Phải có cơ chế **Kill Switch** (Tắt nhanh service mới nếu có lỗi).
-- [ ] Phải có **Shadow Traffic** (Gửi traffic thực vào service mới để test tải nhưng không dùng kết quả).
-- [ ] Phải giữ được **Data Consistency** giữa 2 hệ thống trong suốt quá trình migrate.
+- [ ] Must have a **Kill Switch** (Quickly disable the new service if errors occur).
+- [ ] Must use **Shadow Traffic** (Send real traffic to the new service for load testing without using the results).
+- [ ] Must maintain **Data Consistency** between both systems during the migration.
 
 ### 🟠 SHOULD-DO
-- [ ] Chia nhỏ quá trình migrate thành các pha (Phased rollout).
-- [ ] Có hệ thống **Observability** chung cho cả cũ và mới để so sánh performance.
+- [ ] Break the migration into phases (Phased rollout).
+- [ ] Implement shared **Observability** for both legacy and new systems to compare performance.
 
 ---
 
-## 📊 Modernization Roadmap (Lộ trình điển hình)
-- **Phase 1: Containerization.** Đưa legacy app vào Docker.
-- **Phase 2: Database Extraction.** Tách database riêng cho từng domain.
-- **Phase 3: Service Extraction.** Tách các module nặng/quan trọng ra Microservices.
-- **Phase 4: Optimization.** Chuyển sang dùng các runtime hiện đại (Bun, Go, Rust) cho các phần chịu tải cao.
+## 📊 Modernization Roadmap
+- **Phase 1: Containerization.** Wrap the legacy app in Docker.
+- **Phase 2: Database Extraction.** Separate databases per domain.
+- **Phase 3: Service Extraction.** Separate heavy/critical modules into Microservices.
+- **Phase 4: Optimization.** Switch to modern runtimes (Bun, Go, Rust) for high-load components.
