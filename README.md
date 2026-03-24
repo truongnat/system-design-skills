@@ -10,27 +10,27 @@ A comprehensive, production-grade reference skill for system design — covering
 
 ### ⚡ Cursor Users (GSD-Style Setup - Recommended)
 
-Đây là cách setup mạnh mẽ nhất, lấy cảm hứng từ dự án **Get Shit Done**, giúp Cursor có khả năng thiết kế hệ thống cực kỳ chính xác:
+This is the most powerful setup, inspired by the **Get Shit Done** project, enabling Cursor to design systems with extreme precision:
 
-Trong thư mục dự án của bạn, chạy lệnh duy nhất này:
+In your project directory, run this single command:
 ```bash
 curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/cursor-setup.sh | bash
 ```
 
-**Tại sao cách này tốt hơn?**
-- **Bootstrap locally:** Tự động tải "Bản đồ kiến thức" (`SKILL.md`) và "Cây quyết định" (`decision-trees.md`) về máy để AI truy cập tức thì.
-- **Rule & Skill Separation:** Tách biệt "Cách tư duy" (Rules) và "Kho tri thức" (Skills) để tối ưu hóa context, tránh lãng phí token.
-- **Protocol-driven:** Ép AI phải tuân thủ quy trình "3 câu hỏi đầu tiên" (Scale, Team, Constraints) trước khi đưa ra giải pháp.
+**Why is this better?**
+- **Bootstrap locally:** Automatically downloads the "Knowledge Map" (`SKILL.md`) and "Decision Trees" (`decision-trees.md`) to your machine for instant AI access.
+- **Rule & Skill Separation:** Decouples "Thinking Logic" (Rules) from the "Knowledge Base" (Skills) to optimize context and avoid token waste.
+- **Protocol-driven:** Enforces the "3 First Questions" (Scale, Team, Constraints) workflow before providing any solution.
 
 ---
 
 ### ⌨️ Cursor Commands
 
-Sau khi cài đặt, bạn có thể dùng các lệnh sau trong **Cursor Chat (Cmd+L)** hoặc **Composer (Cmd+I)**:
+Once installed, you can use the following commands in **Cursor Chat (Cmd+L)** or **Composer (Cmd+I)**:
 
-- `/design` + [câu hỏi]: Kích hoạt quy trình thiết kế hệ thống chuyên sâu.
-- `/arch` + [file/folder]: Review cấu trúc thư mục dựa trên các pattern LLD (Clean Arch, Hexagonal).
-- `/scale` + [vấn đề]: Tư vấn lộ trình nâng cấp hệ thống dựa trên Latency & Throughput.
+- `/design` + [question]: Triggers the deep system design workflow.
+- `/arch` + [file/folder]: Reviews folder structure based on LLD patterns (Clean Arch, Hexagonal).
+- `/scale` + [problem]: Advises on a scaling roadmap based on real-world Latency & Throughput.
 
 ---
 
@@ -95,12 +95,12 @@ Every design is automatically checked for **Race Conditions, Double Spends, and 
 
 ## Sample questions (v3.5)
 
-- *"Vẽ cho tôi sơ đồ Sequence cho luồng thanh toán qua Stripe."*
-- *"Thiết kế hệ thống SaaS cho 1000 khách hàng, yêu cầu cô lập dữ liệu tuyệt đối."*
-- *"Làm thế nào để migrate database từ MySQL sang PostgreSQL mà không dừng hệ thống?"*
-- *"So sánh Drizzle ORM và Prisma cho dự án Node.js hiện đại dùng Bun."*
-- *"Xây dựng dashboard giám sát SLI/SLO cho hệ thống thanh toán, chúng ta cần những chỉ số gì?"*
-- *"Phân tích các edge case cho tính năng chuyển tiền giữa 2 ví điện tử."*
+- *"Draw a Sequence diagram for the Stripe payment flow."*
+- *"Design a SaaS system for 1000 customers with strict data isolation."*
+- *"How to migrate a database from MySQL to PostgreSQL without downtime?"*
+- *"Compare Drizzle ORM and Prisma for a modern Node.js project using Bun."*
+- *"Build an SLI/SLO monitoring dashboard for a payment system; what metrics do we need?"*
+- *"Analyze edge cases for a balance transfer feature between two digital wallets."*
 
 ---
 
