@@ -52,6 +52,9 @@ description: >
 
 | Domain | File | Trigger |
 |--------|------|---------|
+| Deployment & Release | `references/deployment-release.md` | "deploy an toàn", "CI/CD", "canary release", "blue green", "rollback" |
+| SaaS & Multi-tenancy | `references/auth-multi-tenancy.md` | "thiết kế SaaS", "phân quyền", "auth", "tenant", "multi-tenant" |
+| SRE & Incident | `references/sre-incident-response.md` | "hệ thống sập", "giám sát", "alert", "post-mortem", "SLO/SLA" |
 | Edge Cases | `references/edge-case-analysis.md` | "trường hợp biên", "edge case", "lỗi hệ thống", "race condition", "failure mode" |
 | Diagrams | `references/documentation-diagrams.md` | "vẽ sơ đồ X", "Mermaid", "C4 model", "Sequence diagram" |
 | Migration | `references/migration-strategy.md` | "nâng cấp hệ thống", "chuyển sang microservices", "migrate database" |
