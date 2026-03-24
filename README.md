@@ -13,10 +13,16 @@ A comprehensive, production-grade reference skill for system design — covering
 Run this in your terminal — an interactive menu will guide you:
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/install.sh | bash
+bash <(curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/install.sh)
 ```
 
+> **Note:** Use `bash <(...)` instead of `curl | bash` — this lets the interactive menu read your keyboard input correctly.
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
+
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 ╔══════════════════════════════════════════╗
 ║   System Design Skills — Installer       ║
 ╚══════════════════════════════════════════╝
@@ -34,6 +40,8 @@ curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/
 
   →
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 
 Pick a number — for options `1`, `2`, `3`, `4`, `5` you'll get a follow-up to choose global vs project-level (or native file vs `AGENTS.md`). Option `7` installs everything at once with sensible defaults.
 
@@ -107,6 +115,8 @@ When installed, this skill gives your AI agent access to a structured knowledge 
 The agent uses a **routing table** in `SKILL.md` to decide which file(s) to read. For a question like *"should I use GraphQL or REST?"*, the agent reads `decision-trees.md` and `backend-hld.md`. For *"what's wrong with my JWT setup?"*, it reads `anti-patterns.md` and `cross-cutting.md`. Multiple files can be read simultaneously for cross-domain questions.
 
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 User question
     │
     ▼
@@ -123,6 +133,8 @@ SKILL.md (routing table)
          ├── ...
 ```
 
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
+
 ---
 
 ## Key Features
@@ -132,31 +144,43 @@ SKILL.md (routing table)
 Every domain file ends with a checklist sorted by severity:
 
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 🔴 MUST     — block ship if missing (security risk, data loss)
 🟠 SHOULD   — fix before production (acceptable with documented exception)
 🟡 NICE     — tech debt, fix over time
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 
 ### Decision trees — not prose
 
 Instead of "here are 5 considerations to weigh...", the decision trees give direct answers:
 
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 RAG: corpus size?
   < 10K docs   → pgvector + OpenAI embeddings
   10K–1M docs  → Pinecone, Weaviate, Qdrant
   > 1M docs    → Milvus, sharded vector DB
 ```
 
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
+
 ### Anti-patterns with severity
 
 Every anti-pattern has a severity label, making it clear what's critical vs cosmetic:
 
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 🔴 CRITICAL    ❌ Store CVV or full magnetic stripe (PCI-DSS)
 🟠 RELIABILITY ❌ Queue consumer not idempotent
 🟡 QUALITY     ❌ key={index} in React list
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 
 ### Current as of 2026
 
@@ -239,6 +263,8 @@ freshness_notes: >
   Review when: React major release, PostgreSQL major,
   Node.js LTS change, new JWT/OAuth CVEs, Next.js App Router changes.
 ```
+
+> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
 
 Review and update annually or after major ecosystem shifts.
 
