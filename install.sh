@@ -24,7 +24,16 @@ sync_repo() {
   need_git
   if [ -d "$SKILL_DIR/.git" ]; then
     info "Updating existing skill repo…"
-    git -C "$SKILL_DIR" pull --depth 1 -q
+    # fetch + reset instead of pull to avoid unrelated-histories / depth issues
+    if git -C "$SKILL_DIR" fetch --depth 1 origin main -q 2>/dev/null && \
+       git -C "$SKILL_DIR" reset --hard origin/main -q 2>/dev/null; then
+      : # success
+    else
+      # Corrupted or unrelated repo — nuke and re-clone
+      warn "Could not update. Re-cloning from scratch…"
+      rm -rf "$SKILL_DIR"
+      git clone --depth 1 -q "$REPO" "$SKILL_DIR"
+    fi
   else
     info "Cloning full skill repo to $SKILL_DIR …"
     git clone --depth 1 -q "$REPO" "$SKILL_DIR"
