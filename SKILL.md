@@ -52,6 +52,7 @@ description: >
 
 | Domain | File | Trigger |
 |--------|------|---------|
+| Tech Selection | `references/tech-selection-strategy.md` | "nên dùng tool gì?", "so sánh X và Y", "stack hiện đại cho Z", "framework nào tốt nhất?" |
 | Quick decisions | `references/decision-trees.md` | "dùng X hay Y?", "nên chọn gì?" |
 | Anti-patterns | `references/anti-patterns.md` | "có nên dùng X?", "tại sao X bị lỗi?" |
 | Deprecated patterns | `references/deprecated.md` | "X còn dùng được không?" |

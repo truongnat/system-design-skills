@@ -30,6 +30,7 @@ FILES=(
   "references/mobile.md"
   "references/platform-engineering.md"
   "references/sizing-guide.md"
+  "references/tech-selection-strategy.md"
   "references/testing-automation.md"
   "references/testing-fundamentals.md"
   "references/ui-design-system.md"
