@@ -52,6 +52,9 @@ description: >
 
 | Domain | File | Trigger |
 |--------|------|---------|
+| Diagrams | `references/documentation-diagrams.md` | "vẽ sơ đồ X", "Mermaid", "C4 model", "Sequence diagram" |
+| Migration | `references/migration-strategy.md` | "nâng cấp hệ thống", "chuyển sang microservices", "migrate database" |
+| ADR (Records) | `references/adr-guide.md` | "ghi lại quyết định", "ADR", "tại sao chọn X?", "lưu trữ kiến trúc" |
 | Tech Selection | `references/tech-selection-strategy.md` | "nên dùng tool gì?", "so sánh X và Y", "stack hiện đại cho Z", "framework nào tốt nhất?" |
 | Quick decisions | `references/decision-trees.md` | "dùng X hay Y?", "nên chọn gì?" |
 | Anti-patterns | `references/anti-patterns.md` | "có nên dùng X?", "tại sao X bị lỗi?" |
