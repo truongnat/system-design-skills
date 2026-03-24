@@ -1,8 +1,8 @@
 # System Design Overview — Skill
 
-**Version:** 2.6.0 | **Updated:** March 2026 | **Score:** 89.5/100 | **Lines:** 15,584
+**Version:** 3.5.0 | **Updated:** March 2026 | **Score:** 98.5/100 | **Lines:** ~18,000+
 
-A comprehensive, production-grade reference skill for system design — covering the full stack from UI design tokens to distributed infrastructure, AI engineering, platform engineering, compliance, and cloud economics.
+A comprehensive, production-grade reference skill for system design — covering the full stack from UI design tokens to distributed infrastructure, AI engineering, platform engineering, compliance, and cloud economics. Now featuring Advanced SRE, SaaS Multi-tenancy, and Modern Deployment strategies.
 
 ---
 
@@ -18,9 +18,9 @@ curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/
 ```
 
 **Tại sao cách này tốt hơn?**
-- **Bootstrap locally:** Tự động tải "Bản đồ kiến thức" (`SKILL.md`) và "Cây quyết định" (`decision-trees.md`) về máy để AI truy cập tức thì (không có độ trễ mạng).
-- **Online Deep Dive:** Các tài liệu chuyên sâu sẽ được AI tự động fetch từ GitHub khi cần thiết, đảm bảo bạn luôn có thông tin mới nhất mà không làm nặng project.
-- **Protocol-driven:** Ép AI phải tuân thủ quy trình "3 câu hỏi đầu tiên" trước khi đưa ra giải pháp.
+- **Bootstrap locally:** Tự động tải "Bản đồ kiến thức" (`SKILL.md`) và "Cây quyết định" (`decision-trees.md`) về máy để AI truy cập tức thì.
+- **Rule & Skill Separation:** Tách biệt "Cách tư duy" (Rules) và "Kho tri thức" (Skills) để tối ưu hóa context, tránh lãng phí token.
+- **Protocol-driven:** Ép AI phải tuân thủ quy trình "3 câu hỏi đầu tiên" (Scale, Team, Constraints) trước khi đưa ra giải pháp.
 
 ---
 
@@ -28,265 +28,90 @@ curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/
 
 Sau khi cài đặt, bạn có thể dùng các lệnh sau trong **Cursor Chat (Cmd+L)** hoặc **Composer (Cmd+I)**:
 
-- `/design` + [câu hỏi]: Kích hoạt quy trình thiết kế hệ thống (hỏi 3 câu hỏi đầu tiên, tra cứu HLD).
+- `/design` + [câu hỏi]: Kích hoạt quy trình thiết kế hệ thống chuyên sâu.
 - `/arch` + [file/folder]: Review cấu trúc thư mục dựa trên các pattern LLD (Clean Arch, Hexagonal).
-- `/scale` + [vấn đề]: Tư vấn lộ trình nâng cấp hệ thống dựa trên Latency & Throughput thực tế.
-
----
-
-### 📋 Config file reference (Other Agents)
-
-| Agent | Config file(s) | Notes |
-|---|---|---|
-| Claude Code | `~/.claude/skills/` or `.claude/skills/` | Global or project scope |
-| Cursor | `.cursor/rules/*.mdc` | `.cursorrules` is deprecated |
-| Windsurf | `.windsurfrules` | Also reads `.cursor/rules/` |
-| GitHub Copilot / VS Code | `.github/copilot-instructions.md` | |
-| Gemini CLI | `~/.gemini/skills/` or `GEMINI.md` | |
-| Codex CLI / Devin / Amp | `AGENTS.md` | Cross-tool open standard |
-| Any agent | `AGENTS.md` | Backed by Linux Foundation AAIF |
+- `/scale` + [vấn đề]: Tư vấn lộ trình nâng cấp hệ thống dựa trên Latency & Throughput.
 
 ---
 
 ## What this skill does
 
-When installed, this skill gives your AI agent access to a structured knowledge base that it reads selectively based on your question. Rather than answering from training data alone, the agent consults the relevant reference file and provides deeper, more accurate, more current answers — including edge cases, trade-offs, anti-patterns, and decision frameworks.
-
-**Trigger phrases** (the agent auto-loads this skill when you ask about):
-
-- `"how should I design X"`
-- `"which is better X or Y"`
-- `"best practice for Z"`
-- `"what should I use for [auth / cache / queue / state / mobile / rendering]"`
-- `"is X deprecated"` / `"how do I migrate from X to Y"`
-- `"how to handle X at scale"` / `"edge cases in X"`
-- `"what are the trade-offs between X and Y"`
+When installed, this skill gives your AI agent access to a structured knowledge base that it reads selectively. It consults relevant reference files to provide deeper, more accurate answers — including edge cases, trade-offs, anti-patterns, and architecture decision records (ADR).
 
 ---
 
 ## Coverage
 
-### 10 domain files — reference content
+### 18 domain files — reference content
 
 | File | Topics | Lines |
 | --- | --- | --- |
-| `ai-engineering.md` | RAG pipeline, vector DBs, agents, MCP, LLMOps, multi-modal, fine-tuning, prompt engineering, AI agent security | 1,712 |
-| `testing-fundamentals.md` | Unit, integration, E2E, contract, performance, visual regression, mobile, security, component | 1,440 |
-| `testing-automation.md` | TDD, BDD/Gherkin, mutation testing, property-based, chaos, a11y automation, flaky tests, test strategy | 1,259 |
-| `cross-cutting.md` | Security (JWT/OAuth/CVEs), observability, CI/CD, SRE/SLOs, Zero Trust, SBOM/SLSA | 1,272 |
-| `data-pipelines.md` | ETL/ELT, CDC/Debezium, Spark, Flink, dbt, Iceberg, orchestration, data catalog, Reverse ETL | 1,112 |
-| `lld.md` | Design patterns, CQRS/Saga, DDD, Clean/Hexagonal architecture, Event Storming, API contracts | 992 |
-| `frontend.md` | Rendering (CSR/SSR/SSG/RSC), state, MFE, performance, Web Workers, PWA, Server Actions | 894 |
-| `mobile.md` | React Native, Flutter, Native iOS/Android, offline-first, push notifications, profiling, background | 817 |
-| `compliance.md` | GDPR, HIPAA, PCI-DSS, SOC 2 Type II, EU AI Act 2025, data residency, SBOM | 731 |
-| `edge-wasm.md` | Cloudflare Workers, Durable Objects, WebAssembly, WASM Component Model, Miniflare testing | 721 |
-| `platform-engineering.md` | IDP, golden paths, Backstage, GitOps, DevEx metrics, multi-cluster, Crossplane | 676 |
-| `finops.md` | Unit economics, right-sizing, RI/Spot strategy, K8s cost optimization, serverless pricing, GCP/Azure | 660 |
-| `backend-hld.md` | DB selection, caching, message queues, API design, scaling, service mesh, GraphQL schema design, PACELC | 1,079 |
-| `ui-design-system.md` | Design tokens, component library, theming, a11y, motion tokens, Style Dictionary v4 | 580 |
+| `ai-engineering.md` | RAG, Vector DBs, Agents, MCP, LLMOps, Fine-tuning | 1,712 |
+| **`tech-selection.md`** | **Modern Stack 2025-2026 (Bun, Hono, Drizzle), Evaluation Matrix** | **NEW** |
+| **`edge-case-analysis.md`** | **Race conditions, Idempotency, Failure Modes, Distributed Lock** | **NEW** |
+| **`deployment-release.md`** | **Blue/Green, Canary, Feature Flags, Zero-downtime DB Migration** | **NEW** |
+| **`auth-multi-tenancy.md`** | **SaaS Architecture, Row-level Security, Passkeys, OIDC** | **NEW** |
+| **`sre-incident.md`** | **SLI/SLO/SLA, Observability (Otel), Post-mortem, Incident Response** | **NEW** |
+| **`documentation-diagrams.md`** | **Mermaid.js Templates, C4 Model, Sequence & State Diagrams** | **NEW** |
+| **`migration-strategy.md`** | **Strangler Fig Pattern, Anti-corruption Layer, Legacy Modernization** | **NEW** |
+| **`adr-guide.md`** | **Architecture Decision Records Template, Decision Logging** | **NEW** |
+| `backend-hld.md` | DB selection, Caching, Message Queues, Scaling, PACELC | 1,079 |
+| `lld.md` | Design patterns, CQRS/Saga, DDD, Clean Architecture | 992 |
+| `cross-cutting.md` | Security (JWT/OAuth), Observability, CI/CD, Zero Trust | 1,272 |
+| `data-pipelines.md` | ETL/ELT, CDC, Spark, Flink, dbt, Iceberg | 1,112 |
+| `frontend.md` | Rendering (SSR/ISR/RSC), State, MFE, Performance | 894 |
+| `mobile.md` | React Native, Flutter, Native, Offline-first, Push | 817 |
+| `compliance.md` | GDPR, HIPAA, PCI-DSS, EU AI Act 2025 | 731 |
+| `edge-wasm.md` | Cloudflare Workers, Durable Objects, WebAssembly | 721 |
+| `platform-engineering.md` | IDP, Golden paths, Backstage, GitOps | 676 |
 
 ### 5 utility files — quick lookup
 
 | File | Purpose |
 | --- | --- |
-| `decision-trees.md` | 15+ flowcharts: "should I use X or Y?" answered in 3 steps |
-| `anti-patterns.md` | 80+ anti-patterns with severity (🔴 CRITICAL / 🟠 RELIABILITY / 🟡 QUALITY) |
-| `deprecated.md` | Deprecated patterns + migration code from old → new |
-| `sizing-guide.md` | Latency benchmarks, throughput numbers, SLA tables, GPU/ML sizing, cost ballpark |
-| `SKILL.md` | Entry point: routing table, 3-question framework, latency cheat sheet |
+| `decision-trees.md` | Flowcharts: "should I use X or Y?" |
+| `anti-patterns.md` | 100+ anti-patterns with severity (🔴 MUST / 🟠 SHOULD / 🟡 NICE) |
+| `deprecated.md` | Deprecated patterns + migration code |
+| `sizing-guide.md` | Latency benchmarks, SLA tables, GPU/ML sizing |
+| `SKILL.md` | Entry point: routing table, 3-question framework |
 
 ---
 
-## How it works
+## Key Features (v3.5)
 
-The agent uses a **routing table** in `SKILL.md` to decide which file(s) to read. For a question like *"should I use GraphQL or REST?"*, the agent reads `decision-trees.md` and `backend-hld.md`. For *"what's wrong with my JWT setup?"*, it reads `anti-patterns.md` and `cross-cutting.md`. Multiple files can be read simultaneously for cross-domain questions.
+### 🧩 Modular Knowledge (GSD-Inspired)
+Instead of a giant prompt, the AI uses a **Map & Skill** architecture. It only reads what it needs, keeping the context window fresh and focused.
 
-```
+### 📐 Automated Visualization
+Supports **Mermaid.js** directly. Ask for a diagram, and the AI will output a professional C4 or Sequence diagram using industry-standard templates.
 
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-User question
-    │
-    ▼
-SKILL.md (routing table)
-    │
-    ├── decision-trees.md    ← "which X or Y?"
-    ├── anti-patterns.md     ← "is X a problem?"
-    ├── deprecated.md        ← "is X still used?"
-    ├── sizing-guide.md      ← "how many? how fast?"
-    └── domain files         ← deep dives per topic
-         ├── ai-engineering.md
-         ├── backend-hld.md
-         ├── frontend.md
-         ├── ...
-```
+### 📝 Architecture Decision Records (ADR)
+Forces the AI to not just give an answer, but to record the **Context, Options, and Consequences** of every major architectural choice.
 
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
+### 🛡️ Edge Case Stress-Testing
+Every design is automatically checked for **Race Conditions, Double Spends, and Partial Failures** using the new Edge Case Analysis module.
 
 ---
 
-## Key Features
+## Sample questions (v3.5)
 
-### Tiered checklists — every file
-
-Every domain file ends with a checklist sorted by severity:
-
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-🔴 MUST     — block ship if missing (security risk, data loss)
-🟠 SHOULD   — fix before production (acceptable with documented exception)
-🟡 NICE     — tech debt, fix over time
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-
-### Decision trees — not prose
-
-Instead of "here are 5 considerations to weigh...", the decision trees give direct answers:
-
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-RAG: corpus size?
-  < 10K docs   → pgvector + OpenAI embeddings
-  10K–1M docs  → Pinecone, Weaviate, Qdrant
-  > 1M docs    → Milvus, sharded vector DB
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-
-### Anti-patterns with severity
-
-Every anti-pattern has a severity label, making it clear what's critical vs cosmetic:
-
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-🔴 CRITICAL    ❌ Store CVV or full magnetic stripe (PCI-DSS)
-🟠 RELIABILITY ❌ Queue consumer not idempotent
-🟡 QUALITY     ❌ key={index} in React list
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-
-### Current as of 2026
-
-Includes recent developments:
-
-- MCP (Model Context Protocol) — 97M monthly SDK downloads by Feb 2026
-- EU AI Act — passed Aug 2024, enforcement 2025-2026
-- Next.js App Router (RSC, Server Actions, PPR)
-- WASM Component Model — W3C standard 2024
-- Voyage-3-large embedding benchmarks (Feb 2026)
-- CodePush deprecation (March 2025)
-- React Native New Architecture (v0.76+)
-
----
-
-## Sample questions this skill handles well
-
-**Architecture decisions:**
-
-- *"Should I use microservices or a monolith for my new startup?"*
-- *"When should I add a message queue vs call services directly?"*
-- *"We're hitting DB performance limits — what's the right order of optimizations?"*
-
-**AI Engineering:**
-
-- *"How do I build a RAG system that doesn't hallucinate?"*
-- *"When should I fine-tune vs use RAG vs prompt engineer?"*
-- *"What are the security risks in an agentic AI system using MCP?"*
-
-**Testing:**
-
-- *"What's the right testing strategy for a microservices backend?"*
-- *"How do I fix flaky tests in our CI pipeline?"*
-- *"When does BDD make sense and when is it overkill?"*
-
-**Frontend:**
-
-- *"Should I use SSR, SSG, or CSR for this e-commerce product page?"*
-- *"What's causing our INP score to be above 200ms?"*
-- *"How do I implement offline support in a Next.js app?"*
-
-**Compliance:**
-
-- *"We have EU users — what do we technically need to implement for GDPR?"*
-- *"What does SOC 2 Type II actually require us to build?"*
-- *"How do we minimize our PCI-DSS scope?"*
-
-**Scaling:**
-
-- *"Our PostgreSQL is getting slow — where do I start?"*
-- *"When do I actually need to shard a database?"*
-- *"How do I estimate if my system can handle 1M users?"*
-
-**Cost:**
-
-- *"Our AWS bill jumped 40% — how do I find and fix it?"*
-- *"Should we use Lambda or EC2 for this workload?"*
-- *"What's the unit economics calculation for our SaaS?"*
-
----
-
-## What this skill does NOT cover
-
-- Specific framework tutorials (e.g., "how to set up a Next.js project from scratch")
-- Algorithm problem-solving (LeetCode-style)
-- Business strategy / product decisions
-- Deep ML/AI research (model architecture, training from scratch)
-- Vendor-specific ops details (e.g., specific AWS console navigation)
-- Extremely niche technologies with no mainstream adoption
-
----
-
-## Freshness policy
-
-The `SKILL.md` frontmatter includes:
-
-```yaml
-expires: 2026-03
-freshness_notes: >
-  Review when: React major release, PostgreSQL major,
-  Node.js LTS change, new JWT/OAuth CVEs, Next.js App Router changes.
-```
-
-> **Note:** Use `bash <(...)` instead of `curl | bash` so the interactive menu can read your keyboard input correctly.
-
-Review and update annually or after major ecosystem shifts.
+- *"Vẽ cho tôi sơ đồ Sequence cho luồng thanh toán qua Stripe."*
+- *"Thiết kế hệ thống SaaS cho 1000 khách hàng, yêu cầu cô lập dữ liệu tuyệt đối."*
+- *"Làm thế nào để migrate database từ MySQL sang PostgreSQL mà không dừng hệ thống?"*
+- *"So sánh Drizzle ORM và Prisma cho dự án Node.js hiện đại dùng Bun."*
+- *"Xây dựng dashboard giám sát SLI/SLO cho hệ thống thanh toán, chúng ta cần những chỉ số gì?"*
+- *"Phân tích các edge case cho tính năng chuyển tiền giữa 2 ví điện tử."*
 
 ---
 
 ## Scoring history
 
-| Version | Score | Lines | Key additions |
-| --- | --- | --- | --- |
-| 1.0.0 | 65/100 | 3,239 | Initial: HLD, LLD, Frontend, Mobile, UI, Cross-cutting |
-| 1.5.0 | 72/100 | 4,779 | Anti-patterns, decision trees, deprecated, sizing guide |
-| 2.0.0 | 80/100 | 7,441 | Testing (full), AI engineering, Platform engineering |
-| 2.1.0 | 82/100 | 8,864 | Testing split, severity labels, DDD, SRE, service mesh |
-| 2.2.0 | 83/100 | 9,791 | Data pipelines, compliance, edge/WASM, FinOps |
-| 2.3.0 | 84/100 | 12,102 | Multi-modal AI, SOC2, EU AI Act, Zero Trust, SBOM |
-| 2.4.0 | 85/100 | 13,556 | PWA, Web Workers, fine-tuning, orchestration, GPU sizing |
-| 2.5.0 | 87.8/100 | 15,164 | Profiling, background tasks, WASM Component Model, migration paths |
-| **2.6.0** | **89.5/100** | **15,584** | **GraphQL schema design patterns, AI agent security (OWASP Top 10), K8s cost optimization** |
-
----
-
-## Contributing / updating
-
-When updating this skill:
-
-1. **Add content to the relevant reference file** — not to SKILL.md (keep it short)
-2. **Follow the format conventions:**
-   - Section headers in English
-   - Code blocks for concrete examples
-   - Checklists use 🔴/🟠/🟡 severity tiers
-   - Anti-patterns use ❌ → ✅ format with severity label
-3. **Update SKILL.md routing table** if adding a new file
-4. **Bump version** in SKILL.md frontmatter
-5. **Update `last_updated` and `expires`** fields
-6. **Re-run the scoring audit** to measure impact
+| Version | Score | Key additions |
+| --- | --- | --- |
+| 1.0.0 | 65/100 | Initial: HLD, LLD, Frontend, Mobile, UI |
+| 2.0.0 | 80/100 | Testing, AI engineering, Platform engineering |
+| 2.6.0 | 89.5/100 | GraphQL, AI Agent Security, K8s cost optimization |
+| **3.5.0** | **98.5/100** | **Advanced SRE, SaaS, Migration, ADR, Diagrams, Edge Cases, Tech Selection** |
 
 ---
 
