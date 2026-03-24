@@ -8,33 +8,57 @@ A comprehensive, production-grade reference skill for system design — covering
 
 ## 🚀 Installation
 
-### 1. The One-Liner (Remote Install)
-Run this command in your terminal to install or update the skill instantly across all agents (Gemini CLI, Cursor, etc.):
+### ⚡ One-Liner
+
+Run this in your terminal — an interactive menu will guide you:
+
 ```bash
-curl -sSL https://raw.githubusercontent.com/truongdq/system-design-skills/main/install.sh | bash
+curl -sSL https://raw.githubusercontent.com/truongnat/system-design-skills/main/install.sh | bash
 ```
 
-### 2. For Gemini CLI (Advanced)
-If you already have `gemini-cli` installed:
-```bash
-gemini skills install https://github.com/truongdq/system-design-skills.git
 ```
-Or link it locally (if you cloned the repo):
-```bash
-./install.sh
+╔══════════════════════════════════════════╗
+║   System Design Skills — Installer       ║
+╚══════════════════════════════════════════╝
+
+  Which agent(s) do you want to install for?
+
+  1) Claude Code
+  2) Cursor
+  3) Windsurf
+  4) GitHub Copilot / VS Code
+  5) Gemini CLI
+  6) AGENTS.md  (Codex CLI / Devin / Amp / universal)
+  7) All of the above
+  0) Cancel
+
+  →
 ```
 
-### 3. For any other AI Agent (Cursor, Claude, Windsurf)
-- **Automatic:** The one-liner above clones files to `~/.gemini/skills/system-design-overview`.
-- **Manual:** Point your agent's context or **MCP (Model Context Protocol)** server to that directory.
+Pick a number — for options `1`, `2`, `3`, `4`, `5` you'll get a follow-up to choose global vs project-level (or native file vs `AGENTS.md`). Option `7` installs everything at once with sensible defaults.
+
+---
+
+### 📋 Config file reference
+
+| Agent | Config file(s) | Notes |
+|---|---|---|
+| Claude Code | `~/.claude/skills/` or `.claude/skills/` | Global or project scope |
+| Cursor | `.cursor/rules/*.mdc` | `.cursorrules` is deprecated |
+| Windsurf | `.windsurfrules` | Also reads `.cursor/rules/` |
+| GitHub Copilot / VS Code | `.github/copilot-instructions.md` | |
+| Gemini CLI | `~/.gemini/skills/` or `GEMINI.md` | |
+| Codex CLI / Devin / Amp | `AGENTS.md` | Cross-tool open standard |
+| Any agent | `AGENTS.md` | Backed by Linux Foundation AAIF |
 
 ---
 
 ## What this skill does
 
-When installed, this skill gives Claude access to a structured knowledge base that Claude reads selectively based on your question. Rather than answering from training data alone, Claude consults the relevant reference file and provides deeper, more accurate, more current answers — including edge cases, trade-offs, anti-patterns, and decision frameworks.
+When installed, this skill gives your AI agent access to a structured knowledge base that it reads selectively based on your question. Rather than answering from training data alone, the agent consults the relevant reference file and provides deeper, more accurate, more current answers — including edge cases, trade-offs, anti-patterns, and decision frameworks.
 
-**Trigger phrases** (Claude auto-loads this skill when you ask about):
+**Trigger phrases** (the agent auto-loads this skill when you ask about):
+
 - `"how should I design X"`
 - `"which is better X or Y"`
 - `"best practice for Z"`
@@ -50,8 +74,8 @@ When installed, this skill gives Claude access to a structured knowledge base th
 ### 10 domain files — reference content
 
 | File | Topics | Lines |
-|------|---------|-------|
-| `ai-engineering.md` | RAG pipeline, vector DBs, agents, MCP, LLMOps, multi-modal, fine-tuning, prompt engineering, **AI agent security** | 1,712 |
+| --- | --- | --- |
+| `ai-engineering.md` | RAG pipeline, vector DBs, agents, MCP, LLMOps, multi-modal, fine-tuning, prompt engineering, AI agent security | 1,712 |
 | `testing-fundamentals.md` | Unit, integration, E2E, contract, performance, visual regression, mobile, security, component | 1,440 |
 | `testing-automation.md` | TDD, BDD/Gherkin, mutation testing, property-based, chaos, a11y automation, flaky tests, test strategy | 1,259 |
 | `cross-cutting.md` | Security (JWT/OAuth/CVEs), observability, CI/CD, SRE/SLOs, Zero Trust, SBOM/SLSA | 1,272 |
@@ -62,14 +86,14 @@ When installed, this skill gives Claude access to a structured knowledge base th
 | `compliance.md` | GDPR, HIPAA, PCI-DSS, SOC 2 Type II, EU AI Act 2025, data residency, SBOM | 731 |
 | `edge-wasm.md` | Cloudflare Workers, Durable Objects, WebAssembly, WASM Component Model, Miniflare testing | 721 |
 | `platform-engineering.md` | IDP, golden paths, Backstage, GitOps, DevEx metrics, multi-cluster, Crossplane | 676 |
-| `finops.md` | Unit economics, right-sizing, RI/Spot strategy, **K8s cost optimization**, serverless pricing, GCP/Azure | 660 |
-| `backend-hld.md` | DB selection, caching, message queues, API design, scaling, service mesh, **GraphQL schema design**, PACELC | 1,079 |
+| `finops.md` | Unit economics, right-sizing, RI/Spot strategy, K8s cost optimization, serverless pricing, GCP/Azure | 660 |
+| `backend-hld.md` | DB selection, caching, message queues, API design, scaling, service mesh, GraphQL schema design, PACELC | 1,079 |
 | `ui-design-system.md` | Design tokens, component library, theming, a11y, motion tokens, Style Dictionary v4 | 580 |
 
 ### 5 utility files — quick lookup
 
 | File | Purpose |
-|------|---------|
+| --- | --- |
 | `decision-trees.md` | 15+ flowcharts: "should I use X or Y?" answered in 3 steps |
 | `anti-patterns.md` | 80+ anti-patterns with severity (🔴 CRITICAL / 🟠 RELIABILITY / 🟡 QUALITY) |
 | `deprecated.md` | Deprecated patterns + migration code from old → new |
@@ -80,7 +104,7 @@ When installed, this skill gives Claude access to a structured knowledge base th
 
 ## How it works
 
-Claude uses a **routing table** in `SKILL.md` to decide which file(s) to read. For a question like *"should I use GraphQL or REST?"*, Claude reads `decision-trees.md` and `backend-hld.md`. For *"what's wrong with my JWT setup?"*, Claude reads `anti-patterns.md` and `cross-cutting.md`. Multiple files can be read simultaneously for cross-domain questions.
+The agent uses a **routing table** in `SKILL.md` to decide which file(s) to read. For a question like *"should I use GraphQL or REST?"*, the agent reads `decision-trees.md` and `backend-hld.md`. For *"what's wrong with my JWT setup?"*, it reads `anti-patterns.md` and `cross-cutting.md`. Multiple files can be read simultaneously for cross-domain questions.
 
 ```
 User question
@@ -101,7 +125,7 @@ SKILL.md (routing table)
 
 ---
 
-## Key features
+## Key Features
 
 ### Tiered checklists — every file
 
@@ -129,14 +153,15 @@ RAG: corpus size?
 Every anti-pattern has a severity label, making it clear what's critical vs cosmetic:
 
 ```
-🔴 CRITICAL   ❌ Store CVV or full magnetic stripe (PCI-DSS)
+🔴 CRITICAL    ❌ Store CVV or full magnetic stripe (PCI-DSS)
 🟠 RELIABILITY ❌ Queue consumer not idempotent
 🟡 QUALITY     ❌ key={index} in React list
 ```
 
-### Current as of 2025
+### Current as of 2026
 
 Includes recent developments:
+
 - MCP (Model Context Protocol) — 97M monthly SDK downloads by Feb 2026
 - EU AI Act — passed Aug 2024, enforcement 2025-2026
 - Next.js App Router (RSC, Server Actions, PPR)
@@ -150,36 +175,43 @@ Includes recent developments:
 ## Sample questions this skill handles well
 
 **Architecture decisions:**
+
 - *"Should I use microservices or a monolith for my new startup?"*
 - *"When should I add a message queue vs call services directly?"*
 - *"We're hitting DB performance limits — what's the right order of optimizations?"*
 
 **AI Engineering:**
+
 - *"How do I build a RAG system that doesn't hallucinate?"*
 - *"When should I fine-tune vs use RAG vs prompt engineer?"*
 - *"What are the security risks in an agentic AI system using MCP?"*
 
 **Testing:**
+
 - *"What's the right testing strategy for a microservices backend?"*
 - *"How do I fix flaky tests in our CI pipeline?"*
 - *"When does BDD make sense and when is it overkill?"*
 
 **Frontend:**
+
 - *"Should I use SSR, SSG, or CSR for this e-commerce product page?"*
 - *"What's causing our INP score to be above 200ms?"*
 - *"How do I implement offline support in a Next.js app?"*
 
 **Compliance:**
+
 - *"We have EU users — what do we technically need to implement for GDPR?"*
 - *"What does SOC 2 Type II actually require us to build?"*
 - *"How do we minimize our PCI-DSS scope?"*
 
 **Scaling:**
+
 - *"Our PostgreSQL is getting slow — where do I start?"*
 - *"When do I actually need to shard a database?"*
 - *"How do I estimate if my system can handle 1M users?"*
 
 **Cost:**
+
 - *"Our AWS bill jumped 40% — how do I find and fix it?"*
 - *"Should we use Lambda or EC2 for this workload?"*
 - *"What's the unit economics calculation for our SaaS?"*
@@ -200,6 +232,7 @@ Includes recent developments:
 ## Freshness policy
 
 The `SKILL.md` frontmatter includes:
+
 ```yaml
 expires: 2026-03
 freshness_notes: >
@@ -214,16 +247,16 @@ Review and update annually or after major ecosystem shifts.
 ## Scoring history
 
 | Version | Score | Lines | Key additions |
-|---------|-------|-------|---------------|
-| 1.0.0   | 65/100 | 3,239 | Initial: HLD, LLD, Frontend, Mobile, UI, Cross-cutting |
-| 1.5.0   | 72/100 | 4,779 | Anti-patterns, decision trees, deprecated, sizing guide |
-| 2.0.0   | 80/100 | 7,441 | Testing (full), AI engineering, Platform engineering |
-| 2.1.0   | 82/100 | 8,864 | Testing split, severity labels, DDD, SRE, service mesh |
-| 2.2.0   | 83/100 | 9,791 | Data pipelines, compliance, edge/WASM, FinOps |
-| 2.3.0   | 84/100 | 12,102 | Multi-modal AI, SOC2, EU AI Act, Zero Trust, SBOM |
-| 2.4.0   | 85/100 | 13,556 | PWA, Web Workers, fine-tuning, orchestration, GPU sizing |
-| 2.5.0   | 87.8/100 | 15,164 | Profiling, background tasks, WASM Component Model, migration paths |
-| **2.6.0** | **89.5/100** | **15,584** | **GraphQL schema design patterns**, **AI agent security (OWASP Top 10)**, K8s cost optimization |
+| --- | --- | --- | --- |
+| 1.0.0 | 65/100 | 3,239 | Initial: HLD, LLD, Frontend, Mobile, UI, Cross-cutting |
+| 1.5.0 | 72/100 | 4,779 | Anti-patterns, decision trees, deprecated, sizing guide |
+| 2.0.0 | 80/100 | 7,441 | Testing (full), AI engineering, Platform engineering |
+| 2.1.0 | 82/100 | 8,864 | Testing split, severity labels, DDD, SRE, service mesh |
+| 2.2.0 | 83/100 | 9,791 | Data pipelines, compliance, edge/WASM, FinOps |
+| 2.3.0 | 84/100 | 12,102 | Multi-modal AI, SOC2, EU AI Act, Zero Trust, SBOM |
+| 2.4.0 | 85/100 | 13,556 | PWA, Web Workers, fine-tuning, orchestration, GPU sizing |
+| 2.5.0 | 87.8/100 | 15,164 | Profiling, background tasks, WASM Component Model, migration paths |
+| **2.6.0** | **89.5/100** | **15,584** | **GraphQL schema design patterns, AI agent security (OWASP Top 10), K8s cost optimization** |
 
 ---
 
