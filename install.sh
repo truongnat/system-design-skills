@@ -6,8 +6,9 @@ set -e
 exec < /dev/tty
 
 REPO="https://github.com/truongnat/system-design-skills.git"
-RAW="https://raw.githubusercontent.com/truongnat/system-design-skills/main/SKILL.md"
+RAW_BASE="https://raw.githubusercontent.com/truongnat/system-design-skills/main"
 SKILL="system-design-overview"
+SKILL_DIR="$HOME/.system-design-skills"   # single source of truth for all agents
 
 # ── helpers ────────────────────────────────────────────────────────────────────
 GREEN="\033[0;32m"; YELLOW="\033[1;33m"; CYAN="\033[0;36m"; RESET="\033[0m"
@@ -18,31 +19,63 @@ warn() { echo -e "${YELLOW}⚠️  $1${RESET}"; }
 need_git()  { command -v git  &>/dev/null || { warn "git not found. Please install git first.";  exit 1; }; }
 need_curl() { command -v curl &>/dev/null || { warn "curl not found. Please install curl first."; exit 1; }; }
 
-clone_or_pull() {   # $1 = destination
+# ── step 1: always clone/update the full repo ──────────────────────────────────
+sync_repo() {
   need_git
-  if [ -d "$1/.git" ]; then
-    info "Updating existing install…"; git -C "$1" pull --depth 1 -q
+  if [ -d "$SKILL_DIR/.git" ]; then
+    info "Updating existing skill repo…"
+    git -C "$SKILL_DIR" pull --depth 1 -q
   else
-    git clone --depth 1 -q "$REPO" "$1"
+    info "Cloning full skill repo to $SKILL_DIR …"
+    git clone --depth 1 -q "$REPO" "$SKILL_DIR"
+  fi
+  ok "Skill files ready at $SKILL_DIR"
+}
+
+# ── step 2: link/configure per agent ──────────────────────────────────────────
+
+link_claude_code() {  # $1 = target skills dir
+  mkdir -p "$1"
+  # Symlink so updates to $SKILL_DIR are instant
+  if [ -L "$1/$SKILL" ]; then
+    info "Symlink already exists, skipping."
+  else
+    ln -s "$SKILL_DIR" "$1/$SKILL"
+    info "Symlinked → $1/$SKILL"
   fi
 }
 
-append_skill() {    # $1 = file path
+write_agents_md() {   # $1 = file path
   need_curl
   mkdir -p "$(dirname "$1")"
-  curl -sSL "$RAW" >> "$1"
-  info "Appended → $1"
+  # Prepend a reference block pointing to the local skill dir
+  REF_BLOCK="## System Design Skills\n\nLocal skill dir: \`$SKILL_DIR\`\n\nWhen answering architecture, scaling, DB, caching, queues, AI engineering, compliance, or cost questions:\n1. Read \`$SKILL_DIR/SKILL.md\` for the routing table\n2. Load the referenced domain file from \`$SKILL_DIR/references/\`\n\n"
+  if grep -q "System Design Skills" "$1" 2>/dev/null; then
+    info "Already present in $1, skipping."
+  else
+    { printf '%b' "$REF_BLOCK"; cat "$1" 2>/dev/null || true; } > "$1.tmp" && mv "$1.tmp" "$1"
+    info "Updated → $1"
+  fi
 }
 
-write_skill() {     # $1 = file path, $2 = optional prepend text
-  need_curl
-  mkdir -p "$(dirname "$1")"
-  if [ -n "$2" ]; then
-    { printf '%b' "$2"; curl -sSL "$RAW"; } > "$1"
-  else
-    curl -sSL "$RAW" -o "$1"
-  fi
-  info "Written → $1"
+write_cursor_mdc() {
+  mkdir -p ".cursor/rules"
+  DEST=".cursor/rules/system-design.mdc"
+  cat > "$DEST" << MDC
+---
+description: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.
+alwaysApply: false
+---
+
+## System Design Skills
+
+Local skill dir: \`$SKILL_DIR\`
+
+When answering architecture or design questions:
+1. Read \`$SKILL_DIR/SKILL.md\` for the routing table
+2. Load the relevant file from \`$SKILL_DIR/references/\`
+MDC
+  info "Written → $DEST"
 }
 
 # ── installers ─────────────────────────────────────────────────────────────────
@@ -52,8 +85,8 @@ install_claude_code() {
   echo "  2) Project (.claude/skills/)"
   read -rp "  → " s
   case $s in
-    1) clone_or_pull "$HOME/.claude/skills/$SKILL" ;;
-    2) clone_or_pull ".claude/skills/$SKILL" ;;
+    1) link_claude_code "$HOME/.claude/skills" ;;
+    2) link_claude_code ".claude/skills" ;;
     *) warn "Invalid choice"; return ;;
   esac
   ok "Claude Code installed."
@@ -65,9 +98,8 @@ install_cursor() {
   echo "  2) AGENTS.md                        (cross-tool standard)"
   echo "  3) Both"
   read -rp "  → " s
-  MDC_FRONT="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering questions.\nalwaysApply: false\n---\n\n"
-  [[ $s == 1 || $s == 3 ]] && write_skill ".cursor/rules/system-design.mdc" "$MDC_FRONT"
-  [[ $s == 2 || $s == 3 ]] && append_skill "AGENTS.md"
+  [[ $s == 1 || $s == 3 ]] && write_cursor_mdc
+  [[ $s == 2 || $s == 3 ]] && write_agents_md "AGENTS.md"
   ok "Cursor installed."
 }
 
@@ -77,8 +109,8 @@ install_windsurf() {
   echo "  2) AGENTS.md       (cross-tool standard)"
   echo "  3) Both"
   read -rp "  → " s
-  [[ $s == 1 || $s == 3 ]] && append_skill ".windsurfrules"
-  [[ $s == 2 || $s == 3 ]] && append_skill "AGENTS.md"
+  [[ $s == 1 || $s == 3 ]] && write_agents_md ".windsurfrules"
+  [[ $s == 2 || $s == 3 ]] && write_agents_md "AGENTS.md"
   ok "Windsurf installed."
 }
 
@@ -88,8 +120,8 @@ install_copilot() {
   echo "  2) AGENTS.md                        (cross-tool standard)"
   echo "  3) Both"
   read -rp "  → " s
-  [[ $s == 1 || $s == 3 ]] && append_skill ".github/copilot-instructions.md"
-  [[ $s == 2 || $s == 3 ]] && append_skill "AGENTS.md"
+  [[ $s == 1 || $s == 3 ]] && write_agents_md ".github/copilot-instructions.md"
+  [[ $s == 2 || $s == 3 ]] && write_agents_md "AGENTS.md"
   ok "GitHub Copilot / VS Code installed."
 }
 
@@ -99,36 +131,51 @@ install_gemini() {
   echo "  2) GEMINI.md  (project-level)"
   echo "  3) Both"
   read -rp "  → " s
-  [[ $s == 1 || $s == 3 ]] && clone_or_pull "$HOME/.gemini/skills/$SKILL"
-  [[ $s == 2 || $s == 3 ]] && append_skill "GEMINI.md"
+  if [[ $s == 1 || $s == 3 ]]; then
+    mkdir -p "$HOME/.gemini/skills"
+    if [ -L "$HOME/.gemini/skills/$SKILL" ]; then
+      info "Symlink already exists, skipping."
+    else
+      ln -s "$SKILL_DIR" "$HOME/.gemini/skills/$SKILL"
+      info "Symlinked → ~/.gemini/skills/$SKILL"
+    fi
+  fi
+  [[ $s == 2 || $s == 3 ]] && write_agents_md "GEMINI.md"
   ok "Gemini CLI installed."
 }
 
 install_agents_md() {
-  append_skill "AGENTS.md"
+  write_agents_md "AGENTS.md"
   ok "AGENTS.md updated (Codex CLI, Devin, Amp, and any AGENTS.md-compatible agent)."
 }
 
 install_all() {
   info "Installing for all agents…"
-  clone_or_pull "$HOME/.claude/skills/$SKILL"
-  MDC_FRONT="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering questions.\nalwaysApply: false\n---\n\n"
-  write_skill ".cursor/rules/system-design.mdc" "$MDC_FRONT"
-  append_skill ".windsurfrules"
-  append_skill ".github/copilot-instructions.md"
-  append_skill "AGENTS.md"
-  append_skill "GEMINI.md"
-  echo -e "\n@AGENTS.md" >> CLAUDE.md
+  link_claude_code "$HOME/.claude/skills"
+  write_cursor_mdc
+  write_agents_md ".windsurfrules"
+  write_agents_md ".github/copilot-instructions.md"
+  write_agents_md "AGENTS.md"
+  write_agents_md "GEMINI.md"
+  mkdir -p "$HOME/.gemini/skills"
+  [ -L "$HOME/.gemini/skills/$SKILL" ] || ln -s "$SKILL_DIR" "$HOME/.gemini/skills/$SKILL"
+  # CLAUDE.md → reference AGENTS.md
+  grep -q "@AGENTS.md" CLAUDE.md 2>/dev/null || echo -e "\n@AGENTS.md" >> CLAUDE.md
   ok "All agents configured."
 }
 
-# ── main menu ──────────────────────────────────────────────────────────────────
+# ── main ───────────────────────────────────────────────────────────────────────
 echo
 echo -e "${CYAN}╔══════════════════════════════════════════╗"
 echo    "║   System Design Skills — Installer       ║"
 echo -e "╚══════════════════════════════════════════╝${RESET}"
 echo
-echo "  Which agent(s) do you want to install for?"
+
+# Always sync the full repo first
+sync_repo
+echo
+
+echo "  Which agent(s) do you want to configure?"
 echo
 echo "  1) Claude Code"
 echo "  2) Cursor"
@@ -154,5 +201,7 @@ case $choice in
 esac
 
 echo
-echo -e "${GREEN}✨ Done! Ask your agent about system architecture to activate the skill.${RESET}"
+echo -e "${GREEN}✨ Done!${RESET}"
+info "Skill files: $SKILL_DIR"
+info "Run again anytime to update or add more agents."
 echo
