@@ -61,20 +61,20 @@ write_agents_md() {   # $1 = file path
 write_cursor_mdc() {
   mkdir -p ".cursor/rules"
   DEST=".cursor/rules/system-design.mdc"
-  cat > "$DEST" << MDC
----
-description: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.
-alwaysApply: false
----
 
-## System Design Skills
+  echo; info "Choose load mode for Cursor:"
+  echo "  1) alwaysApply: true   — load vào mọi chat (recommended)"
+  echo "  2) globs: **/*         — load khi có file nào đang mở"
+  echo "  3) description only    — AI tự quyết (không đảm bảo)"
+  read -rp "  → " cm
+  case $cm in
+    2) FRONTMATTER="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.\nglobs: \"**/*\"\nalwaysApply: false\n---" ;;
+    3) FRONTMATTER="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.\nalwaysApply: false\n---" ;;
+    *) FRONTMATTER="---\ndescription: System design reference. Apply for architecture, scaling, DB, caching, AI engineering, compliance questions.\nalwaysApply: true\n---" ;;
+  esac
 
-Local skill dir: \`$SKILL_DIR\`
-
-When answering architecture or design questions:
-1. Read \`$SKILL_DIR/SKILL.md\` for the routing table
-2. Load the relevant file from \`$SKILL_DIR/references/\`
-MDC
+  printf "%b\n\n## System Design Skills\n\nLocal skill dir: \`%s\`\n\nWhen answering architecture or design questions:\n1. Read \`%s/SKILL.md\` for the routing table\n2. Load the relevant file from \`%s/references/\`\n" \
+    "$FRONTMATTER" "$SKILL_DIR" "$SKILL_DIR" "$SKILL_DIR" > "$DEST"
   info "Written → $DEST"
 }
 
